@@ -1,0 +1,28 @@
+{% extends "bootstrap/base.html"  %}
+
+{% block title %}
+    {% if title %}
+        Coffee matching – {{ title }}
+    {% else %}
+        Coffee matching
+    {% endif %}
+{% endblock title %}
+
+{% block body %}
+
+{% block navbar %}
+<div>Menu</div> <div>One</div>
+{% endblock navbar %}
+
+{% block content %}{% endblock content %}
+
+{% block footer %}
+    {% if footer %}
+        This is footer – {{ footer }}
+    {% else %}
+        This is footer
+    {% endif %}
+{% endblock footer %}
+
+{% endblock body %}
+
