@@ -1,5 +1,6 @@
 {% extends "base.html"  %}
 {% block content %}
+<div class="container-fluid">
 <h1>Browse by {{ pagename }}</h1>
     <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
       <form method="POST" action="/product">
@@ -27,4 +28,12 @@
         <input type="submit" class="btn btn-primary">
       </form>
     </div>
+
+    {% for message in get_flashed_messages()%}
+        <div class="alert alert-dark" role="alert">
+            {{ message }}
+        </div>
+
+    {% endfor %}
+</div>
 {% endblock content %}
