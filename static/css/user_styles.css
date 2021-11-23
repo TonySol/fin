@@ -1,0 +1,23 @@
+.foo {color: red;
+    font-size: 25px;
+    }
+
+.btn-outline-secondary {
+border: 0;
+}
+.btn-check:focus+.btn-outline-secondary, .btn-outline-secondary:focus {
+box-shadow: none;
+}
+.btn-check:focus+.btn, .btn:focus {
+box-shadow: none;
+}
+
+.btn-outline-secondary:hover { color: #0e6efd;
+background-color: #fff;
+border: 0;
+}
+
+.btn-check:checked+.btn-outline-secondary {color: #0e6efd;
+background-color: #fff;
+border: 0
+}
