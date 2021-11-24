@@ -62,14 +62,17 @@
     </nav>
 
     <div class="conteiner" style="margin-top: 58px">
+      <div class="container-fluid">
     {% block content %}{% endblock content %}
+      </div>
     </div>
-
+    <div class="fixed-bottom card-footerm text-center" >
     {% if footer %}
-        This is footer – {{ footer }}
+        &copy; 2021 TonySol – {{ footer }}
     {% else %}
-        This is footer
+        &copy; 2021 TonySol
     {% endif %}
+    </div>
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
