@@ -5,11 +5,12 @@ app.secret_key = "&F)J@NcCfUjXn2r5u8x/y?D(G-KaPdSb"
 
 menu = {'Home': 'index', "Brands": "brands", "Products": "products" }
 brands_list = ["Julius Meinl", "Illy", "Movenpick", "Malongo"]
+footer = "http://bengusta.com.ua"
 
 @app.route("/")
 @app.route("/index")
 def index():
-    return render_template("index.html", menu=menu, title="Homepage", pagename="homepage", footer="link")
+    return render_template("index.html", menu=menu, title="Homepage", pagename="homepage", footer=footer)
 
 @app.route("/brands")
 def brands():
@@ -36,6 +37,10 @@ def products():
             flash("Here are your 3 star products, you little snob.")
             return render_template("products.html", menu=menu, title="All products", pagename="3 star products page", footer="link")
     return render_template("products.html", menu=menu, title="Products", pagename="prodcuts", footer="link")
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("404.html", menu=menu, title="404 page not found", footer="link"), 404
 
 if __name__ == "__main__":
     app.run(debug=True)

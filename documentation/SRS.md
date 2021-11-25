@@ -91,3 +91,4 @@ Create pull request(s) in GitHub.
 Travis-CI build was successfull after merging the pull request(s)
 
 All public functions / methods on all levels should include unit tests. Debug information should be displayed at the debugging level in the console and in a separate file. Classes and functions / methods must have docstrings comments.
+black
