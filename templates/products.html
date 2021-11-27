@@ -1,6 +1,13 @@
 {% extends "base.html"  %}
 {% block content %}
 <h1>Browse by {{ pagename }}</h1>
+
+    {% for message in get_flashed_messages()%}
+        <div class="alert alert-dark" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+
     <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
       <form method="POST" action="/products">
           <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off" value="1-star" name="rate">
@@ -24,14 +31,13 @@
             </svg>
           </label>
 
-        <input type="submit" class="btn btn-primary">
+          <div class="input-group" style="margin-top: 20px">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Brand name" name="brandsname">
+            </div>
+          </div>
+
+          <button class="btn btn-primary" type="submit">Search</button>
       </form>
     </div>
-
-    {% for message in get_flashed_messages()%}
-        <div class="alert alert-dark" role="alert">
-            {{ message }}
-        </div>
-
-    {% endfor %}
 {% endblock content %}
