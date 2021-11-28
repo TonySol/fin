@@ -28,21 +28,29 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            {% for key, value in menu.items() %}
-              {% if request.path == url_for("go." + value) %}
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="{{ url_for('.' + value) }}" >
-                    {{ key }}
+            {% if menu %}
+              {% for key, value in menu.items() %}
+                {% if request.path == url_for( value) %}
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{{ url_for( value) }}" >
+                      {{ key }}
+                    </a>
+                  </li>
+                {% else %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for( value) }}" >
+                      {{ key }}
+                    </a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              <li class="nav-item">
+                  <a class="nav-link" href="/index" >
+                    Home page
                   </a>
-                </li>
-              {% else %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('go.' + value) }}" >
-                    {{ key }}
-                  </a>
-                </li>
-              {% endif %}
-            {% endfor %}
+              </li>
+            {% endif %}
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Types
@@ -68,7 +76,7 @@
     </div>
     <div class="fixed-bottom card-footerm text-center" >
     {% if footer %}
-      &copy; 2021 TonySol – <a href="{{ footer }}">Bengusta</a>
+      &copy; 2021 TonySol – <a href="{{ url_for( 'index' ) }}">Bengusta</a>
     {% else %}
         &copy; 2021 TonySol
     {% endif %}
