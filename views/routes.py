@@ -1,6 +1,6 @@
 from flask import render_template, url_for, request, flash, redirect
 
-def start_app(app):
+def routes(app):
 
     menu = {'Home': 'index', "Brands": "brands", "Products": "products"}
     brands_list = ["Julius Meinl", "Illy", "Movenpick", "Malongo"]
