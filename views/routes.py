@@ -1,3 +1,9 @@
+"""Here is a mini-constructor to create routes without Blueprints
+
+We call this routes() from init.py and pass app as a parameter,
+thus dealing with circular imports. Ha-ha!
+"""
+
 from flask import render_template, url_for, request, flash, redirect
 
 def routes(app):
@@ -9,18 +15,20 @@ def routes(app):
     @app.route("/")
     @app.route("/index")
     def index():
-        return render_template("index.html", menu=menu, title="Coffee matching page", pagename="coffee matching machine!", footer="link")
+        return render_template("index.html", menu=menu, title="Coffee matching page", pagename="coffee matching "
+                                                                                               "machine!",
+                               footer=footer)
 
     @app.route("/brands")
     def brands():
         return render_template("brands.html", menu=menu, title="Brands", pagename="All coffee brands", footer="link")
 
     @app.route("/brand/<string:brand>")
-    def brand(brand):
-        if brand.capitalize() in brands_list:
-            return render_template("brand.html", menu=menu, body=brand.capitalize(), title=brand.capitalize(),
+    def brand(brand_name):
+        if brand_name.capitalize() in brands_list:
+            return render_template("brand.html", menu=menu, body=brand_name.capitalize(), title=brand_name.capitalize(),
                                    footer="link")
-        return render_template("404.html", menu=menu, body=brand, title="404 page not found", footer="link")
+        return render_template("404.html", menu=menu, body=brand_name, title="404 page not found", footer="link")
 
     @app.route("/product")
     def product():

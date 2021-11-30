@@ -19,11 +19,13 @@ def login():
     access_token = create_access_token(identity=username)
     return jsonify(access_token=access_token)
 
+
 @api.route("/getdata", methods=["GET"])
 @jwt_required()
 def getdata():
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
+
 
 @api.route("/test")
 def test():
