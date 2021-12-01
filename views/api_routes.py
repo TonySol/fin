@@ -1,4 +1,11 @@
-from flask import Blueprint, render_template, url_for, request, flash, redirect
+"""This is a routing for api calls
+
+Used Blueprint for routing, using URL prefix /or subdomain(preferebly).
+Intended use to implement extended resources management logic (bulk).
+Integrated JWT to handle access.
+"""
+
+from flask import Blueprint
 
 from flask import jsonify
 from flask import request

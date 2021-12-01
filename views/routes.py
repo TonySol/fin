@@ -15,24 +15,30 @@ def routes(app):
     @app.route("/")
     @app.route("/index")
     def index():
-        return render_template("index.html", menu=menu, title="Coffee matching page", pagename="coffee matching "
-                                                                                               "machine!",
+        return render_template("index.html", menu=menu,
+                               title="Coffee matching page",
+                               pagename="coffee matching machine!",
                                footer=footer)
 
     @app.route("/brands")
     def brands():
-        return render_template("brands.html", menu=menu, title="Brands", pagename="All coffee brands", footer="link")
+        return render_template("brands.html", menu=menu, title="Brands",
+                               pagename="All coffee brands", footer="link")
 
     @app.route("/brand/<string:brand>")
     def brand(brand_name):
         if brand_name.capitalize() in brands_list:
-            return render_template("brand.html", menu=menu, body=brand_name.capitalize(), title=brand_name.capitalize(),
+            return render_template("brand.html", menu=menu,
+                                   body=brand_name.capitalize(),
+                                   title=brand_name.capitalize(),
                                    footer="link")
-        return render_template("404.html", menu=menu, body=brand_name, title="404 page not found", footer="link")
+        return render_template("404.html", menu=menu, body=brand_name,
+                               title="404 page not found", footer="link")
 
     @app.route("/product")
     def product():
-        return render_template("product.html", menu=menu, title="Product", pagename="Product details", footer="link")
+        return render_template("product.html", menu=menu, title="Product",
+                               pagename="Product details", footer="link")
 
     @app.route("/products", methods=["GET", "POST"])
     def products():
@@ -48,9 +54,11 @@ def routes(app):
                     flash("Here are your 3 star products, you little snob.")
                     return render_template("products.html", menu=menu, title="All products",
                                            pagename="3 star products page", footer="link")
-            return render_template("products.html", menu=menu, title="Products", pagename="prodcuts", footer="link")
-        return render_template("products.html", menu=menu, title="Products", pagename="prodcuts", footer="link")
+            return render_template("products.html", menu=menu, title="Products",
+                                   pagename="prodcuts", footer="link")
+        return render_template("products.html", menu=menu, title="Products",
+                               pagename="prodcuts", footer="link")
 
     @app.errorhandler(404)
-    def page_not_found(error):
+    def page_not_found(_error):
         return render_template("404.html", menu=menu, title="404 page not found", footer="link"), 404
