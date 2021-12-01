@@ -17,4 +17,4 @@ class Config:
 
 class Development(Config):
     DEBUG = True
-    SERVER_NAME = "0.0.0.0"
+    SERVER_NAME = "192.168.0.185:5000"
