@@ -4,9 +4,9 @@ We call this routes() from init.py and pass app as a parameter,
 thus dealing with circular imports. Ha-ha!
 """
 
-from flask import render_template, url_for, request, flash, redirect
+from flask import current_app, render_template, url_for, request, flash, redirect
 
-def routes(app):
+def routes(app=current_app):
 
     menu = {'Home': 'index', "Brands": "brands", "Products": "products"}
     brands_list = ["Julius Meinl", "Illy", "Movenpick", "Malongo"]

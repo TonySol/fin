@@ -16,5 +16,5 @@ class Config:
     DEBUG = False
 
 class Development(Config):
-    DEBUG = "True"
-    HOST = "0.0.0.0"
+    DEBUG = True
+    SERVER_NAME = "0.0.0.0"
