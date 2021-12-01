@@ -3,6 +3,7 @@
 Env: you can choose production class or dev(uses Public HOST) class
 Routes: api routes via blueprint, user via methos aka constructor
 """
+
 from flask import Flask
 from flask_jwt_extended import JWTManager
 

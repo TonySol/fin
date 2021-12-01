@@ -2,7 +2,7 @@
 
 Used Blueprint for routing, using URL prefix /or subdomain(preferebly).
 Intended use to implement extended resources management logic (bulk).
-Integrated JWT to handle access.
+Integrated JWT to handle naaccess.
 """
 
 from flask import Blueprint
