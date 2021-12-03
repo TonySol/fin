@@ -15,7 +15,7 @@ install:
   - pip install -r requirements.txt
 
 script:
-  - python test/lint.py
+  - python test/lint.py 10
 
 notifications:
   email:
