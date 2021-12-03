@@ -46,7 +46,8 @@ def check_rate(min_rate=7):
     if mark >= min_rate:
         exit(0)
     else:
-        exit(get_result(file, True))
+        get_result(file, True)
+        exit(1)
 
 
 if __name__ == "__main__":
