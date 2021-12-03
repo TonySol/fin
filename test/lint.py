@@ -17,11 +17,14 @@ def run_linter(report_file="lint_report.html"):
     return report_file
 
 
-def get_result(file):
+def get_result(file, print_me=False):
     with open(file, "r") as f:
-        for line in f:
-            if "Your code has been rated" in line:
-                return line
+        if print_me:
+            print(f.read())
+        else:
+            for line in f:
+                if "Your code has been rated" in line:
+                    return line
 
 
 def parse_result(line):
@@ -43,7 +46,7 @@ def check_rate(min_rate=7):
     if mark >= min_rate:
         exit(0)
     else:
-        exit(file)
+        exit(get_result(file, True))
 
 
 if __name__ == "__main__":
