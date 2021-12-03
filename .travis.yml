@@ -1,0 +1,20 @@
+#the default linux distribution is ok
+#dist: xenial
+
+branches:
+  except:
+    - main
+
+language: python
+python:
+  - 3.8
+
+#env:
+
+install:
+  - pip install -r requirements.txt
+script: "pylint --errors-only"
+
+
+#after_success:
+#  - merge with main branch
