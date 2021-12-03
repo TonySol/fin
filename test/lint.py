@@ -1,3 +1,12 @@
+"""Pylint all .py files in repo and rise 1 exit code only on pylint rate less than input.
+
+Linter curses with exit codes a lot, the script parses the linter result
+and shouts exit code 1 only if linter rate passes threshold – min_rate.
+
+report file: changes the lint result destination
+min_rate: can be passes on script call, default to 7
+"""
+
 from sys import argv, exit
 from os import system
 
@@ -28,13 +37,13 @@ def check_rate(min_rate=7):
             min_rate = int(argv[1])
     except IndexError:
         pass
-
-    line = get_result(run_linter())
+    file = run_linter()
+    line = get_result(file)
     mark = parse_result(line)
     if mark >= min_rate:
         exit(0)
     else:
-        exit(line)
+        exit(file)
 
 
 if __name__ == "__main__":
