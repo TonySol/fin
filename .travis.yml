@@ -13,8 +13,14 @@ python:
 
 install:
   - pip install -r requirements.txt
+
 script:
-  - pylint $(git ls-files '*.py') | cat > lint_report.html
+  - lint.py 9
+
+notifications:
+  email:
+    on_success: never
+    on_failure: always
 
 
 #after_success:
