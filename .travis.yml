@@ -12,8 +12,8 @@ python:
 install:
   - pip install -r requirements.txt
 
-#script:
-#  - python test/lint.py
+script:
+  - python test/lint.py
 
 after_success:
   - git log --oneline
