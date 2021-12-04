@@ -16,10 +16,14 @@ script:
   - python test/lint.py
 
 after_success:
+  - git log --oneline
   - git remote add travis https://${GIT_TOKEN}@github.com/TonySol/fin.git
-  - git checkout main
-  - git merge --no-ff dev
-  - git push travis main
+  - git branch travis_test
+  - git branch
+  - git push –u tavis travis_test
+#  - git checkout main
+#  - git merge --no-ff dev
+#  - git push travis main
 
 notifications:
   email:
