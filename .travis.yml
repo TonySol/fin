@@ -9,13 +9,11 @@ language: python
 python:
   - 3.8
 
-#env:
-
 install:
   - pip install -r requirements.txt
 
 script:
-  - python test/lint.py 10
+  - python test/lint.py
 
 notifications:
   email:

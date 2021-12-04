@@ -3,7 +3,7 @@
 Linter curses with exit codes a lot, the script parses the linter result
 and shouts exit code 1 only if linter rate passes threshold – min_rate.
 
-report file: changes the lint result destination
+report_name: changes the lint result destination
 min_rate: can be passes on script call, default to 7
 """
 
@@ -11,27 +11,24 @@ from sys import argv, exit
 from os import system
 
 
-def run_linter(report_file="lint_report.html"):
-    lint_command = "pylint $(git ls-files '*.py') | cat > " + report_file
+def run_linter(report_name="lint_report.txt"):
+    lint_command = "pylint $(git ls-files '*.py') | cat > " + report_name
     system(lint_command)
-    return report_file
+    return report_name
 
 
-def get_result(file, print_me=False):
+def read_report(file):
     with open(file, "r") as f:
-        if print_me:
-            print(f.read())
-        else:
-            for line in f:
-                if "Your code has been rated" in line:
-                    return line
+        for line in f:
+            if "Your code has been rated" in line:
+                return line
 
 
-def parse_result(line):
+def parse_report(line):
     start = line.find("at ")
     finish = line.find("/")
-    mark = line[start + 3:finish]
-    return round(float(mark))
+    rate = line[start + 3:finish]
+    return round(float(rate))
 
 
 def check_rate(min_rate=7):
@@ -41,12 +38,14 @@ def check_rate(min_rate=7):
     except IndexError:
         pass
     file = run_linter()
-    line = get_result(file)
-    mark = parse_result(line)
-    if mark >= min_rate:
+    line = read_report(file)
+    rate = parse_report(line)
+    if rate >= min_rate:
         exit(0)
     else:
-        get_result(file, True)
+        # with open(file, "r") as f:
+        #     print(f.read())
+        print(f'{line} below required {min_rate} rate.')
         exit(1)
 
 
