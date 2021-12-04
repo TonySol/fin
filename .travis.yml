@@ -20,7 +20,7 @@ after_success:
   - git remote add travis https://${GIT_TOKEN}@github.com/TonySol/fin.git
   - git branch travis_test
   - git branch
-  - git push –u tavis travis_test
+  - git push –u travis travis_test
 #  - git checkout main
 #  - git merge --no-ff dev
 #  - git push travis main
