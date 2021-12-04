@@ -2,6 +2,7 @@
 ############
 .env
 .idea
+lint_report.txt
 # Logs and databases #
 ######################
 *.log

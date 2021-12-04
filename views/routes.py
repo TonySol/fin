@@ -61,4 +61,5 @@ def routes(app=current_app):
 
     @app.errorhandler(404)
     def page_not_found(_error):
-        return render_template("404.html", menu=menu, title="404 page not found", footer="link"), 404
+        return render_template("404.html", menu=menu, title="404 page not found", footer="link"), \
+               404

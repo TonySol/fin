@@ -12,7 +12,7 @@ from os import system
 
 
 def run_linter(report_name="lint_report.txt"):
-    lint_command = "pylint $(git ls-files '*.py') | cat > " + report_name
+    lint_command = "pylint $( git ls-files '*.py') | cat > " + report_name
     system(lint_command)
     return report_name
 
@@ -45,7 +45,7 @@ def check_rate(min_rate=7):
     else:
         # with open(file, "r") as f:
         #     print(f.read())
-        print(f'{line} below required {min_rate} rate.')
+        print(f'{line.strip()} below required {min_rate} rate.')
         exit(1)
 
 
