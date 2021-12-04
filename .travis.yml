@@ -15,6 +15,12 @@ install:
 script:
   - python test/lint.py
 
+after_success:
+  - git remote add travis https://${GIT_TOKEN}@github.com/TonySol/fin.git
+  - git checkout main
+  - git merge --no-ff dev
+  - git push travis main
+
 notifications:
   email:
     on_success: never
@@ -23,3 +29,5 @@ notifications:
 
 #after_success:
 #  - merge with main branch
+
+

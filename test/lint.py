@@ -37,9 +37,11 @@ def check_rate(min_rate=7):
             min_rate = int(argv[1])
     except IndexError:
         pass
+
     file = run_linter()
     line = read_report(file)
     rate = parse_report(line)
+
     if rate >= min_rate:
         exit(0)
     else:
