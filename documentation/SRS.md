@@ -28,15 +28,15 @@ LAMP
 ### Project structure
 
 department-app (a project / app directory)
-|__ migrations (this package must include migration files to manage database schema changes )
-|__ models (this package must include modules with Python classes describing DB models (for ORM only))
-|__ service (this package must include modules with functions / classes to work with DB (CRUD operations))
+?|__ migrations (this package must include migration files to manage database schema changes )
++|__ models (this package must include modules with Python classes describing DB models (for ORM only) class Depts, class Emp)
+|__ service (this package must include modules with functions / classes to work with DB (CRUD operations) methods for ORM to call from views +/- rest)
+??|__ rest (this package must include modules with RESTful service implementation INCLUDES all methods that query db via rest requests like here https://www.youtube.com/watch?v=PTZiDnuC86g )
++|__ templates (this folder must include web app html templates)
++|__ static (this folder must include static files (js, css, images, etc,))
+?|__ tests (this package must include modules with unit tests)
+|__ views (this package must include modules with Web controllers / views. Business logic divided by routes\pages)
 |__ sql (this folder must include *.sql files to work with DB (for non-ORM only))
-|__ rest (this package must include modules with RESTful service implementation)
-|__ templates (this folder must include web app html templates)
-|__ static (this folder must include static files (js, css, images, etc,))
-|__ tests (this package must include modules with unit tests)
-|__ views (this package must include modules with Web controllers / views)
 
 + setup.py
 + requirements.txt
@@ -91,3 +91,4 @@ Create pull request(s) in GitHub.
 Travis-CI build was successfull after merging the pull request(s)
 
 All public functions / methods on all levels should include unit tests. Debug information should be displayed at the debugging level in the console and in a separate file. Classes and functions / methods must have docstrings comments.
+black
