@@ -1,10 +1,6 @@
 #the default linux distribution is ok
 #dist: xenial
 
-branches:
-  except:
-    - main
-
 language: python
 python:
   - 3.8
