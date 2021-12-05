@@ -1,0 +1,24 @@
+#the default linux distribution is ok
+#dist: xenial
+
+branches:
+  except:
+    - main
+
+language: python
+python:
+  - 3.8
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  - python test/lint.py
+
+after_success:
+  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then bash auto-merge.sh; fi'
+
+notifications:
+  email:
+    on_success: never
+    on_failure: always
