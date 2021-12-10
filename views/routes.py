@@ -6,8 +6,10 @@ thus dealing with circular imports. Ha-ha!
 
 from flask import current_app, render_template, url_for, request, flash, redirect
 
-def routes(app=current_app):
+# app = current_app
 
+
+def routes(app, db, model):
     menu = {'Home': 'index', "Brands": "brands", "Products": "products"}
     brands_list = ["Julius Meinl", "Illy", "Movenpick", "Malongo"]
     footer = "http://bengusta.com.ua"
@@ -15,6 +17,9 @@ def routes(app=current_app):
     @app.route("/")
     @app.route("/index")
     def index():
+        dept = model.Department.query.all()
+        for i in dept:
+            print(i.id, i.name)
         return render_template("index.html", menu=menu,
                                title="Coffee matching page",
                                pagename="coffee matching machine!",

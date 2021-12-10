@@ -5,10 +5,16 @@ Routes: api routes via blueprint, user via methos aka constructor
 """
 
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+
+
 
 import config
 
+db = SQLAlchemy()
+migrate = Migrate()
 jwt = JWTManager()
 
 
@@ -21,20 +27,36 @@ def start_app(config_option=config.Config):
     app = Flask(__name__)
     app.config.from_object(config_option)
 
+    db.init_app(app)
+    migrate.init_app(app, db)
     jwt.init_app(app)
 
     # importing and registering routes
     from views.routes import routes
     from views.api_routes import api
 
-    routes(app)
+    #get model to pass it in route method
+    from models import model
+    #pass db and model into routes
+    routes(app, db, model)
     app.register_blueprint(api, url_prefix="/api")
 
     return app
+
+# def create_db(app):
+#     with app.app_context():
+#         db.create_all()
+#     dept = Department()
+#     dept.name = "Asus"
+#     db.session.add(dept)
+#     db.session.commit()
 
 
 # choose config to run
 application = start_app(config.Development)
 
+
+
 if __name__ == "__main__":
     application.run()
+
