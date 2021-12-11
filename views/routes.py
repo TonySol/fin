@@ -6,63 +6,55 @@ thus dealing with circular imports. Ha-ha!
 
 from flask import current_app, render_template, url_for, request, flash, redirect
 
-# app = current_app
-
 
 def routes(app, db, model):
-    menu = {'Home': 'index', "Brands": "brands", "Products": "products"}
-    brands_list = ["Julius Meinl", "Illy", "Movenpick", "Malongo"]
+    menu = {'Home': 'index', "Departments": "departments", "Employee": "employee"}
     footer = "http://bengusta.com.ua"
 
     @app.route("/")
     @app.route("/index")
     def index():
-        dept = model.Department.query.all()
-        for i in dept:
-            print(i.id, i.name)
         return render_template("index.html", menu=menu,
-                               title="Coffee matching page",
-                               pagename="coffee matching machine!",
+                               title="Search for employees in depts",
+                               pagename="Homepage",
                                footer=footer)
 
-    @app.route("/brands")
-    def brands():
-        return render_template("brands.html", menu=menu, title="Brands",
-                               pagename="All coffee brands", footer="link")
+    @app.route("/departments")
+    def departments():
+        dept = model.Department.query.all()
+        dept_list = [i.name for i in dept]
+        return render_template("departments.html", column="name", dept_list=dept_list, menu=menu,
+                               title="Departments", pagename="departments", footer="link")
 
-    @app.route("/brand/<string:brand>")
-    def brand(brand_name):
-        if brand_name.capitalize() in brands_list:
-            return render_template("brand.html", menu=menu,
-                                   body=brand_name.capitalize(),
-                                   title=brand_name.capitalize(),
-                                   footer="link")
-        return render_template("404.html", menu=menu, body=brand_name,
-                               title="404 page not found", footer="link")
+    @app.route("/department/<dept>")
+    def department(dept):
+        dept_name = model.Department.query.filter_by(name=dept).first_or_404().name
+        return render_template("department.html", menu=menu,
+                               body=dept_name.capitalize(),
+                               title=dept_name.capitalize(),
+                               footer="link")
 
-    @app.route("/product")
-    def product():
-        return render_template("product.html", menu=menu, title="Product",
-                               pagename="Product details", footer="link")
 
-    @app.route("/products", methods=["GET", "POST"])
-    def products():
-        if request.method == "POST":
-            if request.form["brandsname"]:
-                return redirect(url_for(".brand", brand=request.form['brandsname']))
-            if request.form.getlist("rate"):
-                if request.form.getlist("rate") == ["1-star"]:
-                    flash("You poor thing, get your 1 star products.")
-                    return render_template("products.html", menu=menu, title="All products",
-                                           pagename="1 star products page", footer="link")
-                elif request.form.getlist("rate") == ["3-star"]:
-                    flash("Here are your 3 star products, you little snob.")
-                    return render_template("products.html", menu=menu, title="All products",
-                                           pagename="3 star products page", footer="link")
-            return render_template("products.html", menu=menu, title="Products",
-                                   pagename="prodcuts", footer="link")
-        return render_template("products.html", menu=menu, title="Products",
-                               pagename="prodcuts", footer="link")
+    @app.route("/employees")
+    def employees():
+        row_names = model.Employee.__table__.columns.keys()
+
+        person = model.Employee.query.all()
+        emp_list = [i.name for i in person]
+        # for row in person:
+        #     new_list = []
+        #     for i in row_names:
+        #         entry = row.i
+        #         new_list.append(entry)
+        #     emp_list.append(new_list)
+
+        return render_template("employees.html", row_names=row_names, emp_list=emp_list, menu=menu,
+                               title="List of all employees", pagename="employee list", footer="link")
+
+    @app.route("/employee", methods=["GET", "POST"])
+    def employee():
+        return render_template("employee.html", menu=menu, title="Employee",
+                               pagename="Employee details", footer="link")
 
     @app.errorhandler(404)
     def page_not_found(_error):

@@ -5,21 +5,19 @@ Intended use to implement extended resources management logic (bulk).
 Integrated JWT to handle naaccess.
 """
 
-from flask import Blueprint
+import sys
 
+from flask import Blueprint
 from flask import jsonify
 from flask import request
-
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
-import sys
+
 sys.path.append("..")
 
 api = Blueprint("api", __name__)
 
-from models.model import Department
-from init import db
 
 @api.route("/login", methods=["POST"])
 def login():
