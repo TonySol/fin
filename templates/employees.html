@@ -1,0 +1,18 @@
+{% extends "base.html"  %}
+{% block content %}
+<h1>This is a {{ pagename }} page.</h1>
+<table>
+    <tr>
+        {% for row_name in row_names %}
+        <th>{{ row_name }}</th>
+        {% endfor %}
+    </tr>
+    {% for person in emp_list %}
+    <tr>
+        {% for row_name in row_names %}
+        <td>{{ person }}</a></td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock content %}
