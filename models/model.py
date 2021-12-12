@@ -1,8 +1,4 @@
-import sys
-
-sys.path.append("..")
 from init import db
-
 
 class Department(db.Model):
     name = db.Column(db.String(20), primary_key=True, index=True, unique=True)
