@@ -10,7 +10,7 @@
     {% for person in emp_list %}
     <tr>
         {% for row_name in row_names %}
-        <td>{{ person }}</a></td>
+        <td>{{ person[row_name] }}</td>
         {% endfor %}
     </tr>
     {% endfor %}

@@ -5,11 +5,27 @@
     <tr>
         <th>{{ column }}</th><th>avg. salary</th>
     </tr>
-    {% for dept in dept_list %}
+    {% for row in dept_salary.items %}
     <tr>
-        <td><a href="{{ url_for('department', dept_name=dept) }}" >{{ dept }}</a></td><td>00.00 USD</td>
+        {% for entry in row %}
+            {% if row.index(entry) == 0 %}
+                <td><a href="{{ url_for('department', dept_name=entry) }}" >{{ entry }}</a></td>
+             {% else %}
+                <td>{{ entry }}</td>
+            {% endif %}
+        {% endfor %}
     </tr>
     {% endfor %}
 </table>
+<h3>Pagination</h3>
+<div>
+    {%- for page in dept_salary.iter_pages() %}
+        {% if page %}
+            <a href="{{ url_for('departments', page_num=page) }}" > {{ page }} </a>
+        {% else %}
+            {{ page }}
+        {% endif %}
+    {% endfor %}
+</div>
 
 {% endblock content %}`
