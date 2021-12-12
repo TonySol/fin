@@ -6,10 +6,8 @@ Thus we don't need to explicitly import and call load_dotenv()
 """
 import os
 
-
-# from dotenv import load_dotenv
-# load_dotenv()
-
+from dotenv import load_dotenv
+load_dotenv()
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")

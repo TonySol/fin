@@ -1,15 +1,13 @@
 """Ignition file: starts flask, apps, prepares env, gets routes, db
 
-Env: you can choose production class or dev(uses Public HOST) class
-Routes: api routes via blueprint, user via methos aka constructor
+:env: choose production class or dev(uses Public HOST) class
+:routes: api-routes via blueprint, user-routes via method aka constructor
 """
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
-
-
 
 import config
 
@@ -34,10 +32,8 @@ def start_app(config_option=config.Config):
     # importing and registering routes
     from views.routes import routes
     from views.api_routes import api
-
-    #get model to pass it in route method
     from models import model
-    #pass db and model into routes
+
     routes(app, db, model)
     app.register_blueprint(api, url_prefix="/api")
 
