@@ -68,13 +68,29 @@ def routes(app, db, model):
                     .order_by(model.Employee.dept_name)\
                     .paginate(per_page=2, page=page_num, error_out=True)
 
+        if request.method == 'POST':
+            birthday_date_start = request.form["birthday_val_start"]
+            if birthday_date_start:
+                filtered_result = db.session \
+                    .query(*[c for c in model.Employee.__table__.columns if c.name != "id"]) \
+                    .filter_by(date_of_bidth=birthday_date_start)\
+                    .order_by(model.Employee.dept_name) \
+                    .paginate(per_page=2, page=page_num, error_out=True)
+                return render_template("employees.html", route_name="employees",
+                                       column_names=column_names,
+                                       emp_data=filtered_result,
+                                       date_today=date.today(),
+                                       menu=menu,
+                                       title="List of all employees", pagename="employee list",
+                                       footer="link")
+
         return render_template("employees.html", route_name="employees",
-                               column_names=column_names,
-                               emp_data=emp_data,
-                               date_today = date.today(),
-                               menu=menu,
-                               title="List of all employees", pagename="employee list",
-                               footer="link")
+                                   column_names=column_names,
+                                   emp_data=emp_data,
+                                   date_today = date.today(),
+                                   menu=menu,
+                                   title="List of all employees", pagename="employee list",
+                                   footer="link")
 
     @app.route("/employee", methods=["GET", "POST"])
     def employee():
