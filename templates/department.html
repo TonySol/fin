@@ -21,7 +21,7 @@
 <div>
     {%- for page in dept_data.iter_pages() %}
         {% if page %}
-            <a href="{{ url_for('departments', page_num=page) }}" > {{ page }} </a>
+            <a href="{{ url_for('department', dept_name=dept_name, page_num=page) }}" > {{ page }} </a>
         {% else %}
             {{ page }}
         {% endif %}
