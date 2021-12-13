@@ -5,9 +5,7 @@
 <h1>Browse all {{ pagename }}</h1>
 <table>
     <tr>
-        {% for row in dept_salary.items %}
-        <th>{{ row.key }}</th>
-        {% endfor %}
+        <th>Department name</th><th>Average salary</th>
     </tr>
     {% for row in dept_salary.items %}
     <tr>

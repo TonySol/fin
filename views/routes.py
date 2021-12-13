@@ -6,6 +6,7 @@ thus dealing with circular imports. Ha-ha!
 
 from flask import current_app, render_template, url_for, request, flash, redirect
 from sqlalchemy import func
+from datetime import date
 
 
 def routes(app, db, model):
@@ -56,15 +57,21 @@ def routes(app, db, model):
                                title=dept_name_db.capitalize(),
                                footer="link")
 
-    @app.route("/employees", defaults={'page_num': 1})
-    @app.route("/employees/page/<int:page_num>")
+    @app.route("/employees", defaults={'page_num': 1},  methods=["GET", "POST"])
+    @app.route("/employees/page/<int:page_num>",  methods=["GET", "POST"])
     def employees(page_num):
-        column_names = model.Employee.__table__.columns.keys()
-        emp_data = model.Employee.query.paginate(per_page=2, page=page_num, error_out=True)
+        column_names = model.Employee.__table__.columns.keys()[1:]
+
+        #iterating over column classes and check its names against "id"
+        emp_data = db.session\
+                    .query(*[c for c in model.Employee.__table__.columns if c.name != "id"])\
+                    .order_by(model.Employee.dept_name)\
+                    .paginate(per_page=2, page=page_num, error_out=True)
 
         return render_template("employees.html", route_name="employees",
                                column_names=column_names,
                                emp_data=emp_data,
+                               date_today = date.today(),
                                menu=menu,
                                title="List of all employees", pagename="employee list",
                                footer="link")

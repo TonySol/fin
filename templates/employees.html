@@ -3,6 +3,21 @@
 
 {% block content %}
 <h1>This is a {{ pagename }} page.</h1>
+
+<div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+  <form method="POST" action="/products">
+      <div class="input-group" style="margin-top: 20px">
+          Search by Date of Birth
+        <div class="input-group mb-3">
+            <input type="date" id="start" name="trip-start" value={{date_today}}
+                   min="1939-01-01" max={{date_today}}>
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+      </div>
+  </form>
+</div>
+
+
 <table>
     <tr>
         {% for col_name in column_names %}
@@ -19,5 +34,7 @@
 </table>
 
 {{ pagination(emp_data, route_name) }}
+
+
 
 {% endblock content %}
