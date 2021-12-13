@@ -1,0 +1,15 @@
+{% macro pagination(pagination_obj, template_name) %}
+<div>
+    {%- for page in pagination_obj.iter_pages() %}
+        {% if page %}
+            {% if varargs %}
+            <a href="{{ url_for(template_name, page_num=page, dept_name=varargs) }}" > {{ page }} </a>
+            {% else %}
+            <a href="{{ url_for(template_name, page_num=page) }}" > {{ page }} </a>
+            {% endif %}
+        {% else %}
+            {{ page }}
+        {% endif %}
+    {% endfor %}
+</div>
+{% endmacro %}

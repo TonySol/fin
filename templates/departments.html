@@ -1,4 +1,6 @@
 {% extends "base.html"  %}
+{% from "macros.html" import pagination %}
+
 {% block content %}
 <h1>Browse all {{ pagename }}</h1>
 <table>
@@ -20,14 +22,7 @@
     {% endfor %}
 </table>
 <h3>Pagination</h3>
-<div>
-    {%- for page in dept_salary.iter_pages() %}
-        {% if page %}
-            <a href="{{ url_for('departments', page_num=page) }}" > {{ page }} </a>
-        {% else %}
-            {{ page }}
-        {% endif %}
-    {% endfor %}
-</div>
+
+{{ pagination(dept_salary, route_name)}}
 
 {% endblock content %}`

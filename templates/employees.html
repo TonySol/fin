@@ -1,4 +1,6 @@
 {% extends "base.html"  %}
+{% from "macros.html" import pagination %}
+
 {% block content %}
 <h1>This is a {{ pagename }} page.</h1>
 <table>
@@ -7,7 +9,7 @@
         <th>{{ col_name }}</th>
         {% endfor %}
     </tr>
-    {% for person in emp_list %}
+    {% for person in emp_data.items %}
     <tr>
         {% for col_name in column_names %}
         <td>{{ person[col_name] }}</td>
@@ -15,4 +17,7 @@
     </tr>
     {% endfor %}
 </table>
+
+{{ pagination(emp_data, route_name) }}
+
 {% endblock content %}

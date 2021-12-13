@@ -31,14 +31,9 @@ def routes(app, db, model):
             .select_from(Department).join(Employee) \
             .group_by(Department.name) \
             .paginate(per_page=2, page=page_num, error_out=True) \
- \
-                # dept_salary = Department.query.\
-        #                     join(Employee, Department.name == Employee.dept_name)\
-        #                     .add_columns(func.avg(Employee.salary))\
-        #                     .group_by(Department.name)\
-        #                     .paginate(max_per_page=10)\
 
-        return render_template("departments.html", column="name", dept_salary=dept_salary,
+        return render_template("departments.html", route_name="departments",
+                               dept_salary=dept_salary,
                                menu=menu, title="Departments",
                                pagename="departments", footer="link")
 
@@ -54,19 +49,22 @@ def routes(app, db, model):
                     .select_from(Employee).filter_by(dept_name=dept_name) \
                     .paginate(per_page=2, page=page_num, error_out=True) \
 
-        return render_template("department.html", menu=menu, dept_name=dept_name,
+        return render_template("department.html", route_name="department",
+                               menu=menu, dept_name=dept_name,
                                dept_data=dept_data,
                                body=dept_name_db.capitalize(),
                                title=dept_name_db.capitalize(),
                                footer="link")
 
-    @app.route("/employees")
-    def employees():
+    @app.route("/employees", defaults={'page_num': 1})
+    @app.route("/employees/page/<int:page_num>")
+    def employees(page_num):
         column_names = model.Employee.__table__.columns.keys()
-        person = model.Employee.query.all()
-        emp_list = [i for i in person]
+        emp_data = model.Employee.query.paginate(per_page=2, page=page_num, error_out=True)
 
-        return render_template("employees.html", column_names=column_names, emp_list=emp_list,
+        return render_template("employees.html", route_name="employees",
+                               column_names=column_names,
+                               emp_data=emp_data,
                                menu=menu,
                                title="List of all employees", pagename="employee list",
                                footer="link")
