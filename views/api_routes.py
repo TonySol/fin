@@ -18,6 +18,7 @@ api = Blueprint("api", __name__)
 
 @api.route("/login", methods=["POST"])
 def login():
+    """Login route – a gateway api access"""
     username = request.json.get("username", None)
     password = request.json.get("password", None)
     if username != "admin" or password != "admin":
@@ -30,10 +31,15 @@ def login():
 @api.route("/getdata", methods=["GET"])
 @jwt_required()
 def getdata():
+    """Simple get data request route
+
+    Works via jwt identifier.
+    """
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
 
 
 @api.route("/test")
 def test():
+    """Always open route to check if api-blueprints available"""
     return "this is a test api route"

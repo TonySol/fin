@@ -9,7 +9,8 @@ from sqlalchemy import func
 
 
 def routes(app, db, model):
-    menu = {'Home': 'index', "Departments": "departments", "Employee": "employee", "Employees": "employees"}
+    menu = {'Home': 'index', "Departments": "departments", "Employee": "employee",
+            "Employees": "employees"}
     footer = "http://bengusta.com.ua"
 
     @app.route("/")
@@ -46,21 +47,31 @@ def routes(app, db, model):
 
     @app.route("/department/<dept_name>")
     def department(dept_name):
-        dept_details = model.Department.query.filter_by(name=dept_name).first_or_404().name
-        return render_template("department.html", menu=menu,
-                               body=dept_details.capitalize(),
-                               title=dept_details.capitalize(),
+        Department = model.Department
+        Employee = model.Employee
+
+
+        dept_name_db = Department.query.filter_by(name=dept_name).first_or_404().name
+        dept_data = db.session.query\
+                        (Employee.name, Employee.surname, Employee.date_of_bidth, Employee.salary)\
+                        .select_from(Employee).filter_by(dept_name=dept_name)\
+                        .paginate(per_page=2, page=1, error_out=True)\
+
+        return render_template("department.html", menu=menu, dept_data=dept_data,
+                               body=dept_name_db.capitalize(),
+                               title=dept_name_db.capitalize(),
                                footer="link")
 
 
     @app.route("/employees")
     def employees():
-        row_names = model.Employee.__table__.columns.keys()
+        column_names = model.Employee.__table__.columns.keys()
         person = model.Employee.query.all()
         emp_list = [i for i in person]
 
-        return render_template("employees.html", row_names=row_names, emp_list=emp_list, menu=menu,
-                               title="List of all employees", pagename="employee list", footer="link")
+        return render_template("employees.html", column_names=column_names, emp_list=emp_list, menu=menu,
+                               title="List of all employees", pagename="employee list",
+                               footer="link")
 
     @app.route("/employee", methods=["GET", "POST"])
     def employee():

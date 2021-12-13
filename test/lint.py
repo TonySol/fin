@@ -12,43 +12,57 @@ from os import system
 
 
 def run_linter(report_name="lint_report.txt"):
+    """Pylints all .py-files that are added to git
+
+    The report is piped to txt file
+    """
     lint_command = "pylint $( git ls-files '*.py') | cat > " + report_name
     system(lint_command)
     return report_name
 
 
-def read_report(file):
-    with open(file, "r") as f:
-        for line in f:
+def read_report(report):
+    """Gets the last line of the report file"""
+    with open(report, "r") as file:
+        for line in file:
             if "Your code has been rated" in line:
                 return line
 
 
 def parse_report(line):
+    """Parses code rating from the the last line of the pylint report"""
     start = line.find("at ")
     finish = line.find("/")
     rate = line[start + 3:finish]
     return round(float(rate))
 
 
-def check_rate(min_rate=7):
+def check_rate(min_rate=7, verbouse=False):
+    """Checks the code rating agains the set value
+
+    :min_rate: set the accepteble code rating to get exit(0)
+    :verbouse: True prints lint-report into the cli
+    """
     try:
         if argv[1]:
             min_rate = int(argv[1])
     except IndexError:
         pass
 
-    file = run_linter()
-    line = read_report(file)
+    report = run_linter()
+    line = read_report(report)
     rate = parse_report(line)
 
     if rate >= min_rate:
         exit(0)
     else:
-        # with open(file, "r") as f:
-        #     print(f.read())
-        print(f'{line.strip()} below required {min_rate} rate.')
-        exit(1)
+        if verbouse:
+            with open(report, "r") as file:
+                print(file.read())
+                exit(1)
+        else:
+            print(f'{line.strip()} below required {min_rate} rate.')
+            exit(1)
 
 
 if __name__ == "__main__":

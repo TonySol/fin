@@ -1,6 +1,11 @@
+"""DB Modelstored here
+
+Works via flask-sqlalchemy
+"""
 from init import db
 
 class Department(db.Model):
+    """Parent table for Employee"""
     name = db.Column(db.String(20), primary_key=True, index=True, unique=True)
     employees = db.relationship('Employee', backref='department', lazy=True)
 
@@ -9,6 +14,10 @@ class Department(db.Model):
 
 
 class Employee(db.Model):
+    """Table for employees data
+
+    :dept_name: is a foreign key for a Department table
+    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
     surname = db.Column(db.String(20))

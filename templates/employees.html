@@ -3,14 +3,14 @@
 <h1>This is a {{ pagename }} page.</h1>
 <table>
     <tr>
-        {% for row_name in row_names %}
-        <th>{{ row_name }}</th>
+        {% for col_name in column_names %}
+        <th>{{ col_name }}</th>
         {% endfor %}
     </tr>
     {% for person in emp_list %}
     <tr>
-        {% for row_name in row_names %}
-        <td>{{ person[row_name] }}</td>
+        {% for col_name in column_names %}
+        <td>{{ person[col_name] }}</td>
         {% endfor %}
     </tr>
     {% endfor %}

@@ -1,3 +1,5 @@
+"""This is env for db migration script"""
+
 from __future__ import with_statement
 
 import logging

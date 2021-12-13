@@ -3,7 +3,9 @@
 <h1>Browse all {{ pagename }}</h1>
 <table>
     <tr>
-        <th>{{ column }}</th><th>avg. salary</th>
+        {% for row in dept_salary.items %}
+        <th>{{ row.key }}</th>
+        {% endfor %}
     </tr>
     {% for row in dept_salary.items %}
     <tr>

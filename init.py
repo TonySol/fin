@@ -9,6 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 
+# imports for route registration
+from views.routes import routes
+from views.api_routes import api
+from models import model
+
 import config
 
 db = SQLAlchemy()
@@ -29,15 +34,11 @@ def start_app(config_option=config.Config):
     migrate.init_app(app, db)
     jwt.init_app(app)
 
-    # importing and registering routes
-    from views.routes import routes
-    from views.api_routes import api
-    from models import model
-
     routes(app, db, model)
     app.register_blueprint(api, url_prefix="/api")
 
     return app
+
 
 # def create_db(app):
 #     with app.app_context():
@@ -51,8 +52,5 @@ def start_app(config_option=config.Config):
 # choose config to run
 application = start_app(config.Development)
 
-
-
 if __name__ == "__main__":
     application.run()
-

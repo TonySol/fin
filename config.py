@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
+    """Basic config class for production"""
     SECRET_KEY = os.environ.get("SECRET_KEY")
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
 
@@ -19,5 +20,6 @@ class Config:
     DEBUG = False
 
 class Development(Config):
+    """Dev config with public server on"""
     DEBUG = True
     SERVER_NAME = "192.168.0.185:5000"
