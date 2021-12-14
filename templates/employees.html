@@ -5,7 +5,7 @@
 <h1>This is a {{ pagename }} page.</h1>
 
 <div class="btn-group" role="group" >
-  <form method="POST" action="/employees">
+  <form method="POST" action="/employees/search">
       <div class="input-group" style="margin-top: 20px">
           Search by Date of Birth
         <div class="input-group mb-3">
@@ -33,8 +33,6 @@
     </tr>
     {% endfor %}
 </table>
-
 {{ pagination(emp_data, route_name, birthday_start=birthday_start, birthday_finish=birthday_finish) }}
-
 
 {% endblock content %}

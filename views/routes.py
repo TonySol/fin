@@ -62,11 +62,9 @@ def routes(app, db, model):
                                footer="link")
 
 
-    @app.route("/employees", methods=["GET", "POST"])
+    @app.route("/employees")
     def employees():
         page_num = request.args.get('page_num', 1, type=int)
-        birthday_start = request.args.get('birthday_start', type=str)
-        birthday_finish = request.args.get('birthday_finish', type=str)
 
         column_names = model.Employee.__table__.columns.keys()[1:]
         emp_data = db.session\
@@ -74,26 +72,25 @@ def routes(app, db, model):
                     .order_by(model.Employee.dept_name)\
                     .paginate(per_page=2, page=page_num, error_out=True)
 
-        if birthday_start or birthday_finish:
-            filtered_result = db.session \
-                .query(*[c for c in model.Employee.__table__.columns if c.name != "id"]) \
-                .filter(model.Employee.date_of_bidth >= birthday_start) \
-                .filter(model.Employee.date_of_bidth <= birthday_finish) \
-                .order_by(model.Employee.dept_name) \
-                .paginate(per_page=2, page=page_num, error_out=True)
+        return render_template("employees.html",
+                               route_name="employees",
+                               column_names=column_names,
+                               emp_data=emp_data,
+                               date_today = date.today(),
+                               menu=menu,
+                               title="List of all employees",
+                               pagename="employee list",
+                               footer="link")
 
-            return render_template("employees.html",
-                                   route_name="employees",
-                                   column_names=column_names,
-                                   birthday_start=birthday_start,
-                                   birthday_finish=birthday_finish,
-                                   emp_data=filtered_result,
-                                   date_today=date.today(),
-                                   menu=menu,
-                                   title="List of all employees", pagename="employee list",
-                                   footer="link")
+    @app.route("/employees/search", methods=["GET", "POST"])
+    def search():
+        page_num = request.args.get('page_num', 1, type=int)
+        column_names = model.Employee.__table__.columns.keys()[1:]
 
-        elif request.method == 'POST':
+        birthday_start = request.args.get('birthday_start', type=str)
+        birthday_finish = request.args.get('birthday_finish', type=str)
+
+        if request.method == 'POST':
             birthday_start = request.form["birthday_start"]
             birthday_finish = request.form["birthday_finish"]
 
@@ -103,9 +100,9 @@ def routes(app, db, model):
                 .filter(model.Employee.date_of_bidth <= birthday_finish) \
                 .order_by(model.Employee.dept_name) \
                 .paginate(per_page=2, page=page_num, error_out=True)
-
+            print(birthday_start, birthday_finish)
             return render_template("employees.html",
-                                   route_name="employees",
+                                   route_name="search",
                                    column_names=column_names,
                                    birthday_start=birthday_start,
                                    birthday_finish=birthday_finish,
@@ -114,11 +111,22 @@ def routes(app, db, model):
                                    menu=menu,
                                    title="List of all employees", pagename="employee list",
                                    footer="link")
-        else:
-            return render_template("employees.html", route_name="employees",
+
+        elif birthday_start or birthday_finish:
+            filtered_result = db.session \
+                .query(*[c for c in model.Employee.__table__.columns if c.name != "id"]) \
+                .filter(model.Employee.date_of_bidth >= birthday_start) \
+                .filter(model.Employee.date_of_bidth <= birthday_finish) \
+                .order_by(model.Employee.dept_name) \
+                .paginate(per_page=2, page=page_num, error_out=True)
+
+            return render_template("employees.html",
+                                   route_name="search",
                                    column_names=column_names,
-                                   emp_data=emp_data,
-                                   date_today = date.today(),
+                                   birthday_start=birthday_start,
+                                   birthday_finish=birthday_finish,
+                                   emp_data=filtered_result,
+                                   date_today=date.today(),
                                    menu=menu,
                                    title="List of all employees", pagename="employee list",
                                    footer="link")
