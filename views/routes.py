@@ -17,7 +17,8 @@ def routes(app, db, model):
     @app.route("/")
     @app.route("/index")
     def index():
-        return render_template("index.html", menu=menu,
+        return render_template("index.html",
+                               menu=menu,
                                title="Search for employees in depts",
                                pagename="Homepage",
                                footer=footer)
@@ -33,7 +34,8 @@ def routes(app, db, model):
             .group_by(Department.name) \
             .paginate(per_page=2, page=page_num, error_out=True) \
 
-        return render_template("departments.html", route_name="departments",
+        return render_template("departments.html",
+                               route_name="departments",
                                dept_salary=dept_salary,
                                menu=menu, title="Departments",
                                pagename="departments", footer="link")
@@ -50,43 +52,70 @@ def routes(app, db, model):
                     .select_from(Employee).filter_by(dept_name=dept_name) \
                     .paginate(per_page=2, page=page_num, error_out=True) \
 
-        return render_template("department.html", route_name="department",
-                               menu=menu, dept_name=dept_name,
+        return render_template("department.html",
+                               route_name="department",
+                               menu=menu,
+                               dept_name=dept_name,
                                dept_data=dept_data,
                                body=dept_name_db.capitalize(),
                                title=dept_name_db.capitalize(),
                                footer="link")
 
-    @app.route("/employees", defaults={'page_num': 1},  methods=["GET", "POST"])
-    @app.route("/employees/<int:page_num>",  methods=["GET", "POST"])
-    def employees(page_num):
-        column_names = model.Employee.__table__.columns.keys()[1:]
 
-        #iterating over column classes and check its names against "id"
+    @app.route("/employees", methods=["GET", "POST"])
+    def employees():
+        page_num = request.args.get('page_num', 1, type=int)
+        birthday_start = request.args.get('birthday_start', type=str)
+        birthday_finish = request.args.get('birthday_finish', type=str)
+
+        column_names = model.Employee.__table__.columns.keys()[1:]
         emp_data = db.session\
                     .query(*[c for c in model.Employee.__table__.columns if c.name != "id"])\
                     .order_by(model.Employee.dept_name)\
                     .paginate(per_page=2, page=page_num, error_out=True)
 
-        if request.method == 'POST':
+        if birthday_start or birthday_finish:
+            filtered_result = db.session \
+                .query(*[c for c in model.Employee.__table__.columns if c.name != "id"]) \
+                .filter(model.Employee.date_of_bidth >= birthday_start) \
+                .filter(model.Employee.date_of_bidth <= birthday_finish) \
+                .order_by(model.Employee.dept_name) \
+                .paginate(per_page=2, page=page_num, error_out=True)
+
+            return render_template("employees.html",
+                                   route_name="employees",
+                                   column_names=column_names,
+                                   birthday_start=birthday_start,
+                                   birthday_finish=birthday_finish,
+                                   emp_data=filtered_result,
+                                   date_today=date.today(),
+                                   menu=menu,
+                                   title="List of all employees", pagename="employee list",
+                                   footer="link")
+
+        elif request.method == 'POST':
             birthday_start = request.form["birthday_start"]
             birthday_finish = request.form["birthday_finish"]
-            if birthday_start:
-                filtered_result = db.session \
-                    .query(*[c for c in model.Employee.__table__.columns if c.name != "id"]) \
-                    .filter(model.Employee.date_of_bidth >= birthday_start) \
-                    .filter(model.Employee.date_of_bidth <= birthday_finish) \
-                    .order_by(model.Employee.dept_name) \
-                    .paginate(page=page_num, error_out=True)
-                return render_template("employees.html", route_name="employees",
-                                       column_names=column_names,
-                                       emp_data=filtered_result,
-                                       date_today=date.today(),
-                                       menu=menu,
-                                       title="List of all employees", pagename="employee list",
-                                       footer="link")
 
-        return render_template("employees.html", route_name="employees",
+            filtered_result = db.session \
+                .query(*[c for c in model.Employee.__table__.columns if c.name != "id"]) \
+                .filter(model.Employee.date_of_bidth >= birthday_start) \
+                .filter(model.Employee.date_of_bidth <= birthday_finish) \
+                .order_by(model.Employee.dept_name) \
+                .paginate(per_page=2, page=page_num, error_out=True)
+
+            return render_template("employees.html",
+                                   route_name="employees",
+                                   column_names=column_names,
+                                   birthday_start=birthday_start,
+                                   birthday_finish=birthday_finish,
+                                   emp_data=filtered_result,
+                                   date_today=date.today(),
+                                   menu=menu,
+                                   title="List of all employees", pagename="employee list",
+                                   footer="link")
+        else:
+            return render_template("employees.html", route_name="employees",
                                    column_names=column_names,
                                    emp_data=emp_data,
                                    date_today = date.today(),

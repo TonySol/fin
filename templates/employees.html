@@ -34,20 +34,7 @@
     {% endfor %}
 </table>
 
-<!--{{ pagination(emp_data, route_name) }}-->
-<div>
-    {%- for page in pagination_obj.iter_pages() %}
-        {% if page %}
-            {% if varargs %}
-            <a href="{{ url_for(template_name, page_num=page, dept_name=varargs) }}" > {{ page }} </a>
-            {% else %}
-            <a href="{{ url_for(template_name, page_num=page) }}" > {{ page }} </a>
-            {% endif %}
-        {% else %}
-            {{ page }}
-        {% endif %}
-    {% endfor %}
-</div>
+{{ pagination(emp_data, route_name, birthday_start=birthday_start, birthday_finish=birthday_finish) }}
 
 
 {% endblock content %}
