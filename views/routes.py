@@ -23,7 +23,7 @@ def routes(app, db, model):
                                footer=footer)
 
     @app.route("/departments", defaults={'page_num': 1})
-    @app.route("/departments/page/<int:page_num>")
+    @app.route("/departments/<int:page_num>")
     def departments(page_num):
         Department = model.Department
         Employee = model.Employee
@@ -39,7 +39,7 @@ def routes(app, db, model):
                                pagename="departments", footer="link")
 
     @app.route("/department/<dept_name>/", defaults={'page_num': 1})
-    @app.route("/department/<dept_name>/page/<int:page_num>")
+    @app.route("/department/<dept_name>/<int:page_num>")
     def department(dept_name, page_num):
         Department = model.Department
         Employee = model.Employee
@@ -58,7 +58,7 @@ def routes(app, db, model):
                                footer="link")
 
     @app.route("/employees", defaults={'page_num': 1},  methods=["GET", "POST"])
-    @app.route("/employees/page/<int:page_num>",  methods=["GET", "POST"])
+    @app.route("/employees/<int:page_num>",  methods=["GET", "POST"])
     def employees(page_num):
         column_names = model.Employee.__table__.columns.keys()[1:]
 
@@ -69,13 +69,15 @@ def routes(app, db, model):
                     .paginate(per_page=2, page=page_num, error_out=True)
 
         if request.method == 'POST':
-            birthday_date_start = request.form["birthday_val_start"]
-            if birthday_date_start:
+            birthday_start = request.form["birthday_start"]
+            birthday_finish = request.form["birthday_finish"]
+            if birthday_start:
                 filtered_result = db.session \
                     .query(*[c for c in model.Employee.__table__.columns if c.name != "id"]) \
-                    .filter_by(date_of_bidth=birthday_date_start)\
+                    .filter(model.Employee.date_of_bidth >= birthday_start) \
+                    .filter(model.Employee.date_of_bidth <= birthday_finish) \
                     .order_by(model.Employee.dept_name) \
-                    .paginate(per_page=2, page=page_num, error_out=True)
+                    .paginate(page=page_num, error_out=True)
                 return render_template("employees.html", route_name="employees",
                                        column_names=column_names,
                                        emp_data=filtered_result,
