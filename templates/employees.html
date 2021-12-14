@@ -27,10 +27,16 @@
     </tr>
     {% for person in emp_data.items %}
     <tr>
+        <form method="POST" action="/employees/edit">
         {% for col_name in column_names %}
-        <td>{{ person[col_name] }}</td>
+        <td>
+            {{ person[col_name] }}
+            <input type="text" name={{col_name}} value={{person[col_name]}}>
+        </td>
         {% endfor %}
     </tr>
+    <input type="hidden" id="hidden_id" name="id" value={{person.id}}>
+    <button class="btn btn-primary" type="submit">Ok</button></form>
     {% endfor %}
 </table>
 {{ pagination(emp_data, route_name, birthday_start=birthday_start, birthday_finish=birthday_finish) }}

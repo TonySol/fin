@@ -68,7 +68,7 @@ def routes(app, db, model):
 
         column_names = model.Employee.__table__.columns.keys()[1:]
         emp_data = db.session\
-                    .query(*[c for c in model.Employee.__table__.columns if c.name != "id"])\
+                    .query(model.Employee)\
                     .order_by(model.Employee.dept_name)\
                     .paginate(per_page=2, page=page_num, error_out=True)
 
@@ -81,6 +81,7 @@ def routes(app, db, model):
                                title="List of all employees",
                                pagename="employee list",
                                footer="link")
+
 
     @app.route("/employees/search", methods=["GET", "POST"])
     def search():
@@ -95,7 +96,7 @@ def routes(app, db, model):
             birthday_finish = request.form["birthday_finish"]
 
             filtered_result = db.session \
-                .query(*[c for c in model.Employee.__table__.columns if c.name != "id"]) \
+                .query(model.Employee) \
                 .filter(model.Employee.date_of_bidth >= birthday_start) \
                 .filter(model.Employee.date_of_bidth <= birthday_finish) \
                 .order_by(model.Employee.dept_name) \
@@ -114,7 +115,7 @@ def routes(app, db, model):
 
         elif birthday_start or birthday_finish:
             filtered_result = db.session \
-                .query(*[c for c in model.Employee.__table__.columns if c.name != "id"]) \
+                .query(model.Employee) \
                 .filter(model.Employee.date_of_bidth >= birthday_start) \
                 .filter(model.Employee.date_of_bidth <= birthday_finish) \
                 .order_by(model.Employee.dept_name) \
@@ -131,8 +132,17 @@ def routes(app, db, model):
                                    title="List of all employees", pagename="employee list",
                                    footer="link")
 
-    @app.route("/employee", methods=["GET", "POST"])
+
+    @app.route("/employee", methods=["POST"])
     def employee():
+        return render_template("employee.html", menu=menu, title="Employee",
+                               pagename="Employee details", footer="link")
+
+    @app.route("/employees/edit", methods=["GET", "POST"])
+    def edit_employee():
+        input = request.form
+
+        print(input["name"], input["salary"], input["id"])
         return render_template("employee.html", menu=menu, title="Employee",
                                pagename="Employee details", footer="link")
 
