@@ -133,16 +133,31 @@ def routes(app, db, model):
                                    footer="link")
 
 
+    @app.route("/employees/add", methods=["GET", "POST"])
+    def edit_employee():
+        add_data = request.form.getlist()
+        # db.session.add(Employee(name="Tony", surname="Sol", date_of_bidth="1995-02-02", salary=5000, dept_name="Julius"))
+        #     *[i for i in add_data]
+        return redirect(url_for("employees"))
+
+
+    @app.route("/employees/delete", methods=["GET", "POST"])
+    def delete_employee():
+        delete_id = request.form["id"]
+
+        result = db.session.query(model.Employee).filter_by(id=delete_id).delete()
+        db.session.commit()
+
+        if result > 0:
+            flash('Entry has been deleted.', "success")
+        else:
+            flash('Could not delete the entry', "fail")
+
+        return redirect(url_for("employees"))
+
+
     @app.route("/employee", methods=["POST"])
     def employee():
-        return render_template("employee.html", menu=menu, title="Employee",
-                               pagename="Employee details", footer="link")
-
-    @app.route("/employees/edit", methods=["GET", "POST"])
-    def edit_employee():
-        input = request.form
-
-        print(input["name"], input["salary"], input["id"])
         return render_template("employee.html", menu=menu, title="Employee",
                                pagename="Employee details", footer="link")
 

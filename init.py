@@ -9,11 +9,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 
-# imports for route registration
-from views.routes import routes
-from views.api_routes import api
-from models import model
-
 import config
 
 db = SQLAlchemy()
@@ -29,6 +24,11 @@ def start_app(config_option=config.Config):
     """
     app = Flask(__name__)
     app.config.from_object(config_option)
+
+    # imports for route registration
+    from views.routes import routes
+    from views.api_routes import api
+    from models import model
 
     db.init_app(app)
     migrate.init_app(app, db)
