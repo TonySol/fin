@@ -133,8 +133,17 @@ def routes(app, db, model):
                                    footer="link")
 
 
-    @app.route("/employees/add", methods=["GET", "POST"])
+    @app.route("/employees/edit", methods=["GET", "POST"])
     def edit_employee():
+        edit_data = request.form
+        for i in edit_data:
+            print(edit_data[i])
+        # db.session.add(Employee(name="Tony", surname="Sol", date_of_bidth="1995-02-02", salary=5000, dept_name="Julius"))
+        #     *[i for i in add_data]
+        return redirect(url_for("employees"))
+
+    @app.route("/employees/add", methods=["GET", "POST"])
+    def add_employee():
         add_data = request.form.getlist()
         # db.session.add(Employee(name="Tony", surname="Sol", date_of_bidth="1995-02-02", salary=5000, dept_name="Julius"))
         #     *[i for i in add_data]

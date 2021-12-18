@@ -11,9 +11,9 @@
     <link type="text/css" href="{{ url_for('static', filename='css/user_styles.css') }}" rel="stylesheet">
     <link rel="icon" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15/svgs/solid/mug-hot.svg">
     {% if title %}
-        <title> Coffee matching – {{ title }} </title>
+        <title> Human capital – {{ title }} </title>
     {% else %}
-        <title> Coffee matching </title>
+        <title> Human capital explorer </title>
     {% endif %}
 
   </head>
@@ -63,15 +63,18 @@
 
     <div class="conteiner" style="margin-top: 58px">
       <div class="container-fluid">
-    {% block content %}{% endblock content %}
+        {% block content %}
+        {% endblock content %}
       </div>
     </div>
+
+    <!--    Footer-->
     <div class="fixed-bottom card-footerm text-center" >
-    {% if footer %}
-      &copy; 2021 TonySol – <a href="{{ url_for( 'index' ) }}">Bengusta</a>
-    {% else %}
+      {% if footer %}
+        &copy; 2021 TonySol – <a href="{{ url_for( 'index' ) }}">Bengusta</a>
+      {% else %}
         &copy; 2021 TonySol
-    {% endif %}
+      {% endif %}
     </div>
     <!-- Optional JavaScript; choose one of the two! -->
 
@@ -87,4 +90,5 @@
     -->
   </body>
 </html>
+
 
