@@ -112,11 +112,11 @@
                         <tr>
                             {% for col_name in column_names %}
                                 {% if col_name == "date_of_bidth" %}
-                                    <td scope="row"><input type='date' name={{col_name}} placeholder="yyyy-mm-dd" required></td>
+                                    <td scope="row"><input type='date' name={{col_name}} max="2005-12-31"></td>
                                 {% elif col_name == "salary" %}
-                                    <td scope="row"><input type='number' name={{col_name}} placeholder="1000" required></td>
+                                    <td scope="row"><input type='number' name={{col_name}} placeholder="1000"></td>
                                 {% else %}
-                                    <td scope="row"><input type='text' name={{col_name}} placeholder={{col_name}} required></td>
+                                    <td scope="row"><input type='text' name={{col_name}} placeholder={{col_name}}></td>
                                 {% endif %}
                             {% endfor %}
                         </tr>

@@ -28,18 +28,20 @@ editBtn[i].onclick = function() {
 
   var modalTitle = uniModal.querySelector('#modal-title');
   var contentEdit = uniModal.querySelector('.modal-content p');
+  var hiddenIdInput = uniModal.querySelector('.modal-body input');
   var tableContent = uniModal.querySelector('.table');
   var modalStyle = uniModal.querySelector('#modal-styling');
-  var actionForm = uniModal.querySelector('form')
+  var actionForm = uniModal.querySelector('form');
   var btnSubmit = uniModal.querySelector('#btn-submit');
 
   modalTitle.textContent = "Edit entry";
-  contentEdit.textContent = "What data of " + userName + "'s you want to change?";
+  contentEdit.textContent = "What details about " + userName + " do you want to edit?";
+  hiddenIdInput.value = entryId;
   tableContent.setAttribute('style', 'display: block');
   modalStyle.setAttribute('class', 'modal-dialog modal-xl');
   btnSubmit.setAttribute('class', 'btn btn-warning');
-  actionForm.setAttribute('action', '/employees/edit')
-  btnSubmit.textContent = "Apply Changes"
+  actionForm.setAttribute('action', '/employees/edit');
+  btnSubmit.textContent = "Apply Changes";
 }}
 
 let clsLen = delBtn.length;
@@ -55,17 +57,17 @@ for (let i = 0; i < clsLen; i++) {
       var hiddenIdInput = uniModal.querySelector('.modal-body input');
       var tableContent = uniModal.querySelector('.table');
       var modalStyle = uniModal.querySelector('#modal-styling');
-      var actionForm = uniModal.querySelector('form')
+      var actionForm = uniModal.querySelector('form');
       var btnSubmit = uniModal.querySelector('#btn-submit');
 
       modalTitle.textContent = "Delete entry";
-      contentEdit.textContent = "Are you sure you want to delete " + userName + "'s data?";
+      contentEdit.textContent = "Are you sure you want delete " + userName + "'s data?";
       hiddenIdInput.value = entryId;
       tableContent.setAttribute('style', 'display: none');
       modalStyle.setAttribute('class', 'modal-dialog');
       btnSubmit.setAttribute('class', 'btn btn-danger');
-      actionForm.setAttribute('action', '/employees/delete')
-      btnSubmit.textContent = "Delete"
+      actionForm.setAttribute('action', '/employees/delete');
+      btnSubmit.textContent = "Delete";
 
 }}
 

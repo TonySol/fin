@@ -137,16 +137,11 @@ def routes(app, db, model):
     @app.route("/employees/edit", methods=["GET", "POST"])
     def edit_employee():
         edit_data = request.form
-        if edit_data["date_of_bidth"]:
-            print(edit_data["date_of_bidth"])
-        print(*[edit_data[i] for i in edit_data])
-        #if havevalue apply
-        # validate date via date-time
-        # if edit_data[salary]:validate int
-        #make flash if not validated
-        #apply to db query only avalible
-        # db.session.add(Employee(name="Tony", surname="Sol", date_of_bidth="1995-02-02", salary=5000, dept_name="Julius"))
-        #     *[i for i in add_data]
+        employee = db.session.query(model.Employee).filter_by(id=edit_data["id"]).first()
+        for key, value in edit_data.items():
+            if value:
+                setattr(employee, key, value)
+        db.session.commit()
         return redirect(url_for("employees"))
 
     @app.route("/employees/add", methods=["GET", "POST"])
