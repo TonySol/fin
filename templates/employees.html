@@ -55,7 +55,7 @@
                 {% if col_name == "date_of_bidth" %}
                         <td scope="col"> Date of Birth </td>
                     {% elif col_name == "dept_name" %}
-                        <td scope="col"> Date of Birth </td>
+                        <td scope="col"> Department name </td>
                     {% else %}
                         <td scope="col"> {{ col_name.capitalize() }} </td>
                 {% endif %}
@@ -101,7 +101,7 @@
                                 {% if col_name == "date_of_bidth" %}
                                         <td scope="col"> Date of Birth </td>
                                     {% elif col_name == "dept_name" %}
-                                        <td scope="col"> Date of Birth </td>
+                                        <td scope="col"> Department name </td>
                                     {% else %}
                                         <td scope="col"> {{ col_name.capitalize() }} </td>
                                 {% endif %}
@@ -112,11 +112,11 @@
                         <tr>
                             {% for col_name in column_names %}
                                 {% if col_name == "date_of_bidth" %}
-                                    <td scope="row"><input type='text' name={{col_name}} placeholder="yyyy-mm-dd"></td>
+                                    <td scope="row"><input type='date' name={{col_name}} placeholder="yyyy-mm-dd" required></td>
                                 {% elif col_name == "salary" %}
-                                    <td scope="row"><input type='text' name={{col_name}} placeholder="1000"></td>
+                                    <td scope="row"><input type='number' name={{col_name}} placeholder="1000" required></td>
                                 {% else %}
-                                    <td scope="row"><input type='text' name={{col_name}} placeholder={{col_name}}></td>
+                                    <td scope="row"><input type='text' name={{col_name}} placeholder={{col_name}} required></td>
                                 {% endif %}
                             {% endfor %}
                         </tr>
