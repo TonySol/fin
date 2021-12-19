@@ -137,10 +137,9 @@ def routes(app, db, model):
     @app.route("/employees/edit", methods=["GET", "POST"])
     def edit_employee():
         edit_data = request.form
-        # if edit_data["date_of_bidth"]:
-        #     print(edit_data["date_of_bidth"])
-        # for i in edit_data:
-        #     print(edit_data[i])
+        if edit_data["date_of_bidth"]:
+            print(edit_data["date_of_bidth"])
+        print(*[edit_data[i] for i in edit_data])
         #if havevalue apply
         # validate date via date-time
         # if edit_data[salary]:validate int

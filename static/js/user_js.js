@@ -1,8 +1,3 @@
-
-
-
-
-
 //universal modal
 var uniModal = document.getElementById("uniModal");
 var closeBtn = document.getElementsByClassName("close")[0];
@@ -22,6 +17,7 @@ window.onclick = function(event) {
     uniModal.style.display = "none";
   }
 }
+
 let clsEditLen = editBtn.length;
 for (let i = 0; i < clsEditLen; i++) {
 editBtn[i].onclick = function() {
@@ -34,6 +30,7 @@ editBtn[i].onclick = function() {
   var contentEdit = uniModal.querySelector('.modal-content p');
   var tableContent = uniModal.querySelector('.table');
   var modalStyle = uniModal.querySelector('#modal-styling');
+  var actionForm = uniModal.querySelector('form')
   var btnSubmit = uniModal.querySelector('#btn-submit');
 
   modalTitle.textContent = "Edit entry";
@@ -41,6 +38,7 @@ editBtn[i].onclick = function() {
   tableContent.setAttribute('style', 'display: block');
   modalStyle.setAttribute('class', 'modal-dialog modal-xl');
   btnSubmit.setAttribute('class', 'btn btn-warning');
+  actionForm.setAttribute('action', '/employees/edit')
   btnSubmit.textContent = "Apply Changes"
 }}
 
@@ -57,6 +55,7 @@ for (let i = 0; i < clsLen; i++) {
       var hiddenIdInput = uniModal.querySelector('.modal-body input');
       var tableContent = uniModal.querySelector('.table');
       var modalStyle = uniModal.querySelector('#modal-styling');
+      var actionForm = uniModal.querySelector('form')
       var btnSubmit = uniModal.querySelector('#btn-submit');
 
       modalTitle.textContent = "Delete entry";
@@ -65,6 +64,7 @@ for (let i = 0; i < clsLen; i++) {
       tableContent.setAttribute('style', 'display: none');
       modalStyle.setAttribute('class', 'modal-dialog');
       btnSubmit.setAttribute('class', 'btn btn-danger');
+      actionForm.setAttribute('action', '/employees/delete')
       btnSubmit.textContent = "Delete"
 
 }}
