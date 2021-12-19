@@ -7,6 +7,7 @@ thus dealing with circular imports. Ha-ha!
 from flask import current_app, render_template, url_for, request, flash, redirect
 from sqlalchemy import func
 from datetime import date
+import json
 
 
 def routes(app, db, model):
@@ -76,7 +77,7 @@ def routes(app, db, model):
                                route_name="employees",
                                column_names=column_names,
                                emp_data=emp_data,
-                               date_today = date.today(),
+                               date_today=date.today(),
                                menu=menu,
                                title="List of all employees",
                                pagename="employee list",
@@ -101,7 +102,7 @@ def routes(app, db, model):
                 .filter(model.Employee.date_of_bidth <= birthday_finish) \
                 .order_by(model.Employee.dept_name) \
                 .paginate(per_page=2, page=page_num, error_out=True)
-            print(birthday_start, birthday_finish)
+
             return render_template("employees.html",
                                    route_name="search",
                                    column_names=column_names,
@@ -136,8 +137,15 @@ def routes(app, db, model):
     @app.route("/employees/edit", methods=["GET", "POST"])
     def edit_employee():
         edit_data = request.form
-        for i in edit_data:
-            print(edit_data[i])
+        # if edit_data["date_of_bidth"]:
+        #     print(edit_data["date_of_bidth"])
+        # for i in edit_data:
+        #     print(edit_data[i])
+        #if havevalue apply
+        # validate date via date-time
+        # if edit_data[salary]:validate int
+        #make flash if not validated
+        #apply to db query only avalible
         # db.session.add(Employee(name="Tony", surname="Sol", date_of_bidth="1995-02-02", salary=5000, dept_name="Julius"))
         #     *[i for i in add_data]
         return redirect(url_for("employees"))

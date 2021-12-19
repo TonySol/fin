@@ -3,23 +3,24 @@
 
 {% block content %}
 <h1>Here are all employees of the {{ body }} department listed.</h1>
-<table>
+<div class="table-responsive">
+<table class="table align-middle table-striped table-hover">
     <tr>
-        <th>Name</th><th>Surname</th><th>Date of Birth</th><th>Salary</th>
+        <th scope="col">Name</th><th scope="col">Surname</th><th scope="col">Date of Birth</th><th scope="col">Salary</th>
     </tr>
     {% for row in dept_data.items %}
     <tr>
         {% for entry in row %}
             {% if row.index(entry) == 0 %}
-                <td>{{ entry }}</td>
+                <td scope="row">{{ entry }}</td>
              {% else %}
-                <td>{{ entry }}</td>
+                <td scope="row">{{ entry }}</td>
             {% endif %}
         {% endfor %}
     </tr>
     {% endfor %}
 </table>
-
+</div>
 {{ pagination(dept_data, route_name, dept_name=dept_name) }}
 
 {% endblock content %}

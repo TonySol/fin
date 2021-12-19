@@ -3,22 +3,25 @@
 
 {% block content %}
 <h1>Browse all {{ pagename }}</h1>
-<table>
+<div class="table-responsive">
+<table class="table align-middle table-striped table-hover">
     <tr>
-        <th>Department name</th><th>Average salary</th>
+        <th scope="col">Department name</th>
+        <th scope="col">Average salary</th>
     </tr>
     {% for row in dept_salary.items %}
     <tr>
         {% for entry in row %}
             {% if row.index(entry) == 0 %}
-                <td><a href="{{ url_for('department', dept_name=entry) }}" >{{ entry }}</a></td>
+                <td scope="row"><a href="{{ url_for('department', dept_name=entry) }}" >{{ entry }}</a></td>
              {% else %}
-                <td>{{ entry }}</td>
+                <td scope="row">{{ entry }}</td>
             {% endif %}
         {% endfor %}
     </tr>
     {% endfor %}
 </table>
+</div>
 <h3>Pagination</h3>
 
 {{ pagination(dept_salary, route_name)}}

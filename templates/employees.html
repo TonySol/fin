@@ -45,97 +45,82 @@
         </div>
       </div>
   </form>
+    <button type="button" class="btn btn-primary btn-sm" id="addBtn">Add New Entry</button>
 </div>
-<table class="table table-striped table-hover">
+<div class="table-responsive">
+<table class="table align-middle table-striped table-hover">
     <thead>
         <tr>
             {% for col_name in column_names %}
-            <th scope="col">{{ col_name }}</th>
+                {% if col_name == "date_of_bidth" %}
+                        <td scope="col"> Date of Birth </td>
+                    {% elif col_name == "dept_name" %}
+                        <td scope="col"> Date of Birth </td>
+                    {% else %}
+                        <td scope="col"> {{ col_name.capitalize() }} </td>
+                {% endif %}
             {% endfor %}
         </tr>
     </thead>
     <tbody>
         {% for person in emp_data.items %}
-        <form method="POST" action="/employees/edit">
             <tr>
                 {% for col_name in column_names %}
-                <td scope="row">
-                    {{ person[col_name] }}
-                </td>
+                <td scope="row"> {{ person[col_name] }}</td>
                 {% endfor %}
                 <td>
-                    <button type="button" id="myBtn" class="btn btn-warning btn-sm m-1"
-                            data-bs-toggle="modal" data-bs-target="#editModal"
-                            user-name={{person.name}} entry-id={{person.id}}>Edit</button>
-                    <button type="button" class="btn btn-danger btn-sm m-1"
-                            data-bs-toggle="modal" data-bs-target="#deleteModal"
-                            user-name={{person.name}} entry-id={{person.id}} >Delete</button>
+                    <button type="button" class="editBtn btn btn-warning btn-sm m-1"
+                            entry-id={{person.id}} user-name={{person.name}}>Edit</button>
+                    <button type="button" class="delBtn btn btn-danger btn-sm"
+                            entry-id={{person.id}} user-name={{person.name}} >Delete</button>
                 </td>
             </tr>
-        </form>
         {% endfor %}
     </tbody>
 </table>
-
+</div>
 
 {{ pagination(emp_data, route_name, birthday_start=birthday_start, birthday_finish=birthday_finish) }}
 
-
-<!-- Modal delete -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Attention!</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure, you want to delete this entry?</p>
-        <div class="table-block">
+<!--Modal -->
+<div id="uniModal" class="modal">
+    <div class="modal-dialog modal-xl" id="modal-styling">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-title">Edit data</h5>
+            <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-            <form action="/employees/delete" method="POST">
-                <input type="hidden" name="id" value="">
-                <input class="btn btn-danger" type="submit">
-            </form>
-      </div>
+          <div class="modal-body">
+              <p>What's your edits?</p>
+              <form action="/employees/edit" method="POST">
+                  <input type="hidden" name="id" value="">
+                  <table class="table">
+                    <thead>
+                        <tr>
+                            {% for col_name in column_names %}
+                            <th scope="col">{{ col_name.capitalize() }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% for col_name in column_names %}
+                                {% if col_name == "date_of_bidth" %}
+                                    <td scope="row"><input type='text' name={{col_name}} placeholder="yyyy-mm-dd"></td>
+                                {% elif col_name == "salary" %}
+                                    <td scope="row"><input type='text' name={{col_name}} placeholder="1000"></td>
+                                {% else %}
+                                    <td scope="row"><input type='text' name={{col_name}} placeholder={{col_name}}></td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                  </table>
+                  <button class="btn btn-warning" id="btn-submit" type="submit">Apply changes</button>
+              </form>
+          </div>
+        </div>
     </div>
-  </div>
-</div>
-
-
-<!-- Modal edit -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Edit data</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          <p>What's your edits?</p>
-          <form action="/employees/edit" method="POST">
-              <input type="hidden" name="id" value="">
-              <table class="table">
-                <thead>
-                    <tr>
-                        {% for col_name in column_names %}
-                        <th scope="col">{{ col_name }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        {% for col_name in column_names %}
-                        <td scope="row"><input type='text' name={{col_name}}></td>
-                        {% endfor %}
-                    </tr>
-                </tbody>
-              </table>
-              <button class="btn btn-warning" type="submit">Apply changes</button>
-          </form>
-      </div>
-    </div>
-  </div>
 </div>
 
 {% endblock content %}

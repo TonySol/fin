@@ -1,34 +1,73 @@
-var exampleModal = document.getElementById('deleteModal')
-exampleModal.addEventListener('show.bs.modal', function (event) {
-  // Button that triggered the modal
-  var button = event.relatedTarget
-  // Extract info from data-bs-* attributes
-  var entryId = button.getAttribute('entry-id')
-  var userName = button.getAttribute('user-name')
-  // If necessary, you could initiate an AJAX request here
-  // and then do the updating in a callback.
-  //
-  // Update the modal's content.
-  var modalBodyInput = exampleModal.querySelector('.modal-body input')
-  var modalTextMessage = exampleModal.querySelector('.modal-body p')
 
-  modalBodyInput.value = entryId
-  modalTextMessage.textContent = "Are you sure you want to delete " + userName + "'s data"
 
-})
 
-var editModal = document.getElementById('editModal')
-editModal.addEventListener('show.bs.modal', function (event) {
-  var button = event.relatedTarget
 
-  var entryId = button.getAttribute('entry-id')
-  var userName = button.getAttribute('user-name')
 
-  var modalBodyInput = editModal.querySelector('.modal-body input')
-  var modalTextMessage = editModal.querySelector('.modal-body p')
+//universal modal
+var uniModal = document.getElementById("uniModal");
+var closeBtn = document.getElementsByClassName("close")[0];
 
-  modalBodyInput.value = entryId
-  modalTextMessage.textContent = "How would you like to edit " + userName + "'s data"
+var delBtn = document.getElementsByClassName("delBtn");
+var editBtn = document.getElementsByClassName("editBtn");
 
-})
+
+// When the user clicks on <span> (x), close the modal
+closeBtn.onclick = function() {
+  uniModal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == uniModal) {
+    uniModal.style.display = "none";
+  }
+}
+let clsEditLen = editBtn.length;
+for (let i = 0; i < clsEditLen; i++) {
+editBtn[i].onclick = function() {
+  uniModal.style.display = "block";
+
+  var entryId = editBtn[i].getAttribute('entry-id');
+  var userName = editBtn[i].getAttribute('user-name');
+
+  var modalTitle = uniModal.querySelector('#modal-title');
+  var contentEdit = uniModal.querySelector('.modal-content p');
+  var tableContent = uniModal.querySelector('.table');
+  var modalStyle = uniModal.querySelector('#modal-styling');
+  var btnSubmit = uniModal.querySelector('#btn-submit');
+
+  modalTitle.textContent = "Edit entry";
+  contentEdit.textContent = "What data of " + userName + "'s you want to change?";
+  tableContent.setAttribute('style', 'display: block');
+  modalStyle.setAttribute('class', 'modal-dialog modal-xl');
+  btnSubmit.setAttribute('class', 'btn btn-warning');
+  btnSubmit.textContent = "Apply Changes"
+}}
+
+let clsLen = delBtn.length;
+for (let i = 0; i < clsLen; i++) {
+    delBtn[i].onclick = function() {
+      uniModal.style.display = "block";
+
+      var entryId = delBtn[i].getAttribute('entry-id');
+      var userName = delBtn[i].getAttribute('user-name');
+
+      var modalTitle = uniModal.querySelector('#modal-title');
+      var contentEdit = uniModal.querySelector('.modal-content p');
+      var hiddenIdInput = uniModal.querySelector('.modal-body input');
+      var tableContent = uniModal.querySelector('.table');
+      var modalStyle = uniModal.querySelector('#modal-styling');
+      var btnSubmit = uniModal.querySelector('#btn-submit');
+
+      modalTitle.textContent = "Delete entry";
+      contentEdit.textContent = "Are you sure you want to delete " + userName + "'s data?";
+      hiddenIdInput.value = entryId;
+      tableContent.setAttribute('style', 'display: none');
+      modalStyle.setAttribute('class', 'modal-dialog');
+      btnSubmit.setAttribute('class', 'btn btn-danger');
+      btnSubmit.textContent = "Delete"
+
+}}
+
+
 
