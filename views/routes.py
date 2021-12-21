@@ -138,7 +138,13 @@ def routes(app, db, model):
     @app.route("/employees/edit", methods=["GET", "POST"])
     def edit_employee():
         edit_data = request.form
+
+        exist_in_parent = db.session.query(model.Department).filter_by(name=edit_data["dept_name"]).all()
         employee = db.session.query(model.Employee).filter_by(id=edit_data["id"]).first()
+
+        if not exist_in_parent:
+            db.session.add(model.Department(name=edit_data["dept_name"]))
+
         for key, value in edit_data.items():
             if value:
                 setattr(employee, key, value)
@@ -148,9 +154,10 @@ def routes(app, db, model):
     @app.route("/employees/add", methods=["GET", "POST"])
     def add_employee():
         add_data = request.form
-        parent = db.session.query(model.Department).filter_by(name=add_data["dept_name"]).all()
-        if not parent:
+        exist_in_parent = db.session.query(model.Department).filter_by(name=add_data["dept_name"]).all()
+        if not exist_in_parent:
             db.session.add(model.Department(name=add_data["dept_name"]))
+
         db.session.add(model.Employee(**add_data))
         db.session.commit()
         return redirect(url_for("employees"))
