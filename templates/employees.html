@@ -32,20 +32,26 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
-<div class="btn-group" role="group" >
-  <form method="POST" action="/employees/search">
-      <div class="input-group" style="margin-top: 20px">
-          Search by Date of Birth
-        <div class="input-group mb-3">
-            <input type="date" name="birthday_start" value={{date_today}}
-                   min="1939-01-01" max={{date_today}}>
-            <input type="date" name="birthday_finish" value={{date_today}}
-                   min="1939-01-01" max={{date_today}}>
-            <button class="btn btn-primary" type="submit">Search</button>
-        </div>
-      </div>
-  </form>
-    <button type="button" class="btn btn-primary btn-sm" id="addBtn">Add New Entry</button>
+
+<form class="row" method="POST" action="/employees/search">
+<h5>Search employees by date of birth</h5>
+    <div class="mb-3">
+        <label for="startDate" class="form-label">Born after:</label>
+        <input id="startDate" type="date" name="birthday_start" value={{date_today}}
+           min="1939-01-01" max={{date_today}}>
+        <label for="endDate" class="form-label">Born before:</label>
+        <input id="endDate" type="date" name="birthday_finish" value={{date_today}}
+           min="1939-01-01" max={{date_today}}>
+            <div class="col-auto">
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+    </div>
+
+</form>
+
+
+<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <button type="button" class="btn btn-primary" id="addBtn">Add New Entry</button>
 </div>
 <div class="table-responsive">
 <table class="table align-middle table-striped table-hover">
@@ -68,11 +74,14 @@
                 {% for col_name in column_names %}
                 <td scope="row"> {{ person[col_name] }}</td>
                 {% endfor %}
-                <td>
-                    <button type="button" class="editBtn btn btn-warning btn-sm m-1"
+                <td scope="row">
+                    <div class="gap-2 d-md-flex justify-content-md-end">
+                    <button type="button" class="editBtn btn btn-warning"
                             entry-id={{person.id}} user-name={{person.name}}>Edit</button>
-                    <button type="button" class="delBtn btn btn-danger btn-sm"
+
+                    <button type="button" class="delBtn btn btn-danger"
                             entry-id={{person.id}} user-name={{person.name}} >Delete</button>
+                    </div>
                 </td>
             </tr>
         {% endfor %}
@@ -112,11 +121,11 @@
                         <tr>
                             {% for col_name in column_names %}
                                 {% if col_name == "date_of_bidth" %}
-                                    <td scope="row"><input type='date' name={{col_name}} max="2005-12-31"></td>
+                                    <td scope="row"><input class="main-input" type='date' name={{col_name}} max="2005-12-31"></td>
                                 {% elif col_name == "salary" %}
-                                    <td scope="row"><input type='number' name={{col_name}} placeholder="1000"></td>
+                                    <td scope="row"><input class="main-input" type='number' name={{col_name}} placeholder="1000"></td>
                                 {% else %}
-                                    <td scope="row"><input type='text' name={{col_name}} placeholder={{col_name}}></td>
+                                    <td scope="row"><input class="main-input" type='text' name={{col_name}} placeholder={{col_name}}></td>
                                 {% endif %}
                             {% endfor %}
                         </tr>

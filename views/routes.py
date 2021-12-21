@@ -11,7 +11,7 @@ import json
 
 
 def routes(app, db, model):
-    menu = {'Home': 'index', "Departments": "departments", "Employee": "employee",
+    menu = {"Home": "index", "Departments": "departments", "Employee": "employee",
             "Employees": "employees"}
     footer = "http://bengusta.com.ua"
 
@@ -47,7 +47,8 @@ def routes(app, db, model):
         Department = model.Department
         Employee = model.Employee
 
-        dept_name_db = Department.query.filter_by(name=dept_name).first_or_404().name
+        check_name = Department.query.filter_by(name=dept_name).first_or_404()
+        page_name = check_name.name
         dept_data = db.session.query \
                     (Employee.name, Employee.surname, Employee.date_of_bidth, Employee.salary) \
                     .select_from(Employee).filter_by(dept_name=dept_name) \
@@ -58,16 +59,16 @@ def routes(app, db, model):
                                menu=menu,
                                dept_name=dept_name,
                                dept_data=dept_data,
-                               body=dept_name_db.capitalize(),
-                               title=dept_name_db.capitalize(),
+                               body=page_name.capitalize(),
+                               title=page_name.capitalize(),
                                footer="link")
 
 
     @app.route("/employees")
     def employees():
-        page_num = request.args.get('page_num', 1, type=int)
-
+        page_num = request.args.get("page_num", 1, type=int)
         column_names = model.Employee.__table__.columns.keys()[1:]
+
         emp_data = db.session\
                     .query(model.Employee)\
                     .order_by(model.Employee.dept_name)\
@@ -89,10 +90,10 @@ def routes(app, db, model):
         page_num = request.args.get('page_num', 1, type=int)
         column_names = model.Employee.__table__.columns.keys()[1:]
 
-        birthday_start = request.args.get('birthday_start', type=str)
-        birthday_finish = request.args.get('birthday_finish', type=str)
+        birthday_start = request.args.get("birthday_start", type=str)
+        birthday_finish = request.args.get("birthday_finish", type=str)
 
-        if request.method == 'POST':
+        if request.method == "POST":
             birthday_start = request.form["birthday_start"]
             birthday_finish = request.form["birthday_finish"]
 
@@ -146,24 +147,25 @@ def routes(app, db, model):
 
     @app.route("/employees/add", methods=["GET", "POST"])
     def add_employee():
-        add_data = request.form.getlist()
-        # db.session.add(Employee(name="Tony", surname="Sol", date_of_bidth="1995-02-02", salary=5000, dept_name="Julius"))
-        #     *[i for i in add_data]
+        add_data = request.form
+        parent = db.session.query(model.Department).filter_by(name=add_data["dept_name"]).all()
+        if not parent:
+            db.session.add(model.Department(name=add_data["dept_name"]))
+        db.session.add(model.Employee(**add_data))
+        db.session.commit()
         return redirect(url_for("employees"))
 
 
     @app.route("/employees/delete", methods=["GET", "POST"])
     def delete_employee():
         delete_id = request.form["id"]
-
         result = db.session.query(model.Employee).filter_by(id=delete_id).delete()
         db.session.commit()
 
         if result > 0:
-            flash('Entry has been deleted.', "success")
+            flash("Entry has been deleted.", "success")
         else:
-            flash('Could not delete the entry', "fail")
-
+            flash("Could not delete the entry", "fail")
         return redirect(url_for("employees"))
 
 
