@@ -9,14 +9,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 
-import config
-
 db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
 
 
-def start_app(config_option=config.Config):
+def start_app(config_option):
     """This factory pattern is used to run extensions on multiple apps if needed.
 
     No worries about flask application-specific states stored on a "global" extension.
@@ -25,16 +23,14 @@ def start_app(config_option=config.Config):
     app = Flask(__name__)
     app.config.from_object(config_option)
 
-    # imports for route registration
-    from views.routes import routes
-    from views.api_routes import api
-    from models import model
-
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
 
-    routes(app, db, model)
+    from app.views import web
+    app.register_blueprint(web)
+
+    from app.views import api
     app.register_blueprint(api, url_prefix="/api")
 
     return app
@@ -49,8 +45,3 @@ def start_app(config_option=config.Config):
 #     db.session.commit()
 
 
-# choose config to run
-application = start_app(config.Development)
-
-if __name__ == "__main__":
-    application.run()

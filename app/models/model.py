@@ -2,7 +2,7 @@
 
 Works via flask-sqlalchemy
 """
-from init import db
+from app import db
 
 class Department(db.Model):
     """Parent table for Employee"""
