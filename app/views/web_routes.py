@@ -6,8 +6,8 @@ thus dealing with circular imports. Ha-ha!
 
 from app.views import web
 from app import db
-from app.models import Department, Employee
-from app.service.services import DepartmetnService
+from app.models import Employee
+from app.service.services import DepartmentService, EmployeeService
 
 from flask import render_template, url_for, request, flash, redirect
 from sqlalchemy import func
@@ -17,6 +17,8 @@ from datetime import date
 menu = {"Home": "web.index", "Departments": "web.departments", "Employee": "web.employee",
         "Employees": "web.employees"}
 footer = "http://bengusta.com.ua"
+
+
 
 @web.route("/")
 @web.route("/index")
@@ -31,15 +33,9 @@ def index():
 @web.route("/departments/<int:page_num>")
 def departments(page_num):
 
+    dept_salary = DepartmentService.get_avg_salary()\
+        .paginate(per_page=2, page=page_num, error_out=True)
 
-    dept_salary = db.session.query(Department.name, func.avg(Employee.salary)) \
-        .select_from(Department).join(Employee) \
-        .group_by(Department.name) \
-        .paginate(per_page=2, page=page_num, error_out=True) \
-
-    all_depts = DepartmetnService.get_department()
-    for i in all_depts:
-        print(i)
     return render_template("departments.html",
                            route_name="web.departments",
                            dept_salary=dept_salary,
@@ -49,9 +45,8 @@ def departments(page_num):
 @web.route("/department/<dept_name>/", defaults={'page_num': 1})
 @web.route("/department/<dept_name>/<int:page_num>")
 def department(dept_name, page_num):
-
-    check_name = Department.query.filter_by(name=dept_name).first_or_404()
-    page_name = check_name.name
+    if_exists = DepartmentService.get_all().get_or_404(dept_name)
+    page_name = if_exists.name
     dept_data = db.session.query \
                 (Employee.name, Employee.surname, Employee.date_of_bidth, Employee.salary) \
                 .select_from(Employee).filter_by(dept_name=dept_name) \
@@ -140,29 +135,24 @@ def search():
 
 @web.route("/employees/edit", methods=["GET", "POST"])
 def edit_employee():
-    edit_data = request.form
+    data_from_form = request.form
 
-    exist_in_parent = db.session.query(Department).filter_by(name=edit_data["dept_name"]).all()
-    employee = db.session.query(Employee).filter_by(id=edit_data["id"]).first()
+    find_department = DepartmentService.get_by_name(data_from_form["dept_name"])
+    if not find_department:
+        DepartmentService.add_dept(data_from_form["dept_name"])
 
-    if not exist_in_parent:
-        db.session.add(Department(name=edit_data["dept_name"]))
-
-    for key, value in edit_data.items():
-        if value:
-            setattr(employee, key, value)
-    db.session.commit()
+    EmployeeService.edit_emp(data_from_form["id"], data_from_form)
     return redirect(url_for("web.employees"))
 
 @web.route("/employees/add", methods=["GET", "POST"])
 def add_employee():
-    add_data = request.form
-    exist_in_parent = db.session.query(Department).filter_by(name=add_data["dept_name"]).all()
-    if not exist_in_parent:
-        db.session.add(Department(name=add_data["dept_name"]))
+    data_from_form = request.form
+    find_department = DepartmentService.get_by_name(data_from_form["dept_name"])
 
-    db.session.add(Employee(**add_data))
-    db.session.commit()
+    if not find_department:
+        DepartmentService.add_dept(data_from_form["dept_name"])
+    EmployeeService.add_emp(**data_from_form)
+
     return redirect(url_for("web.employees"))
 
 
