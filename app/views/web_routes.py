@@ -14,8 +14,8 @@ from sqlalchemy import func
 from datetime import date
 
 
-menu = {"Home": "index", "Departments": "departments", "Employee": "employee",
-        "Employees": "employees"}
+menu = {"Home": "web.index", "Departments": "web.departments", "Employee": "web.employee",
+        "Employees": "web.employees"}
 footer = "http://bengusta.com.ua"
 
 @web.route("/")
@@ -41,7 +41,7 @@ def departments(page_num):
     for i in all_depts:
         print(i)
     return render_template("departments.html",
-                           route_name="departments",
+                           route_name="web.departments",
                            dept_salary=dept_salary,
                            menu=menu, title="Departments",
                            pagename="departments", footer="link")
@@ -58,7 +58,7 @@ def department(dept_name, page_num):
                 .paginate(per_page=2, page=page_num, error_out=True) \
 
     return render_template("department.html",
-                           route_name="department",
+                           route_name="web.department",
                            menu=menu,
                            dept_name=dept_name,
                            dept_data=dept_data,
@@ -78,7 +78,7 @@ def employees():
                 .paginate(per_page=2, page=page_num, error_out=True)
 
     return render_template("employees.html",
-                           route_name="employees",
+                           route_name="web.employees",
                            column_names=column_names,
                            emp_data=emp_data,
                            date_today=date.today(),
@@ -108,7 +108,7 @@ def search():
             .paginate(per_page=2, page=page_num, error_out=True)
 
         return render_template("employees.html",
-                               route_name="search",
+                               route_name="web.search",
                                column_names=column_names,
                                birthday_start=birthday_start,
                                birthday_finish=birthday_finish,
@@ -127,7 +127,7 @@ def search():
             .paginate(per_page=2, page=page_num, error_out=True)
 
         return render_template("employees.html",
-                               route_name="search",
+                               route_name="web.search",
                                column_names=column_names,
                                birthday_start=birthday_start,
                                birthday_finish=birthday_finish,
@@ -152,7 +152,7 @@ def edit_employee():
         if value:
             setattr(employee, key, value)
     db.session.commit()
-    return redirect(url_for("employees"))
+    return redirect(url_for("web.employees"))
 
 @web.route("/employees/add", methods=["GET", "POST"])
 def add_employee():
@@ -163,7 +163,7 @@ def add_employee():
 
     db.session.add(Employee(**add_data))
     db.session.commit()
-    return redirect(url_for("employees"))
+    return redirect(url_for("web.employees"))
 
 
 @web.route("/employees/delete", methods=["GET", "POST"])
@@ -176,7 +176,7 @@ def delete_employee():
         flash("Entry has been deleted.", "success")
     else:
         flash("Could not delete the entry", "fail")
-    return redirect(url_for("employees"))
+    return redirect(url_for("web.employees"))
 
 
 @web.route("/employee", methods=["POST"])
