@@ -6,17 +6,17 @@
 <div class="table-responsive">
 <table class="table align-middle table-striped table-hover">
     <tr>
-        <th scope="col">Name</th><th scope="col">Surname</th><th scope="col">Date of Birth</th><th scope="col">Salary</th>
+        <th scope="col">Name</th>
+        <th scope="col">Surname</th>
+        <th scope="col">Date of Birth</th>
+        <th scope="col">Salary</th>
     </tr>
-    {% for row in dept_data.items %}
+    {% for entry in dept_data.items %}
     <tr>
-        {% for entry in row %}
-            {% if row.index(entry) == 0 %}
-                <td scope="row">{{ entry }}</td>
-             {% else %}
-                <td scope="row">{{ entry }}</td>
-            {% endif %}
-        {% endfor %}
+        <td scope="row">{{ entry.name }}</td>
+        <td scope="row">{{ entry.surname }}</td>
+        <td scope="row">{{ entry.date_of_bidth }}</td>
+        <td scope="row">{{ entry.salary }}</td>
     </tr>
     {% endfor %}
 </table>

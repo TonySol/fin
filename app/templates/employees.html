@@ -57,30 +57,28 @@
 <table class="table align-middle table-striped table-hover">
     <thead>
         <tr>
-            {% for col_name in column_names %}
-                {% if col_name == "date_of_bidth" %}
-                        <td scope="col"> Date of Birth </td>
-                    {% elif col_name == "dept_name" %}
-                        <td scope="col"> Department name </td>
-                    {% else %}
-                        <td scope="col"> {{ col_name.capitalize() }} </td>
-                {% endif %}
-            {% endfor %}
+            <th scope="col">Name</th>
+            <th scope="col">Surname</th>
+            <th scope="col">Date of Birth</th>
+            <th scope="col">Salary</th>
+            <th scope="col">Department</th>
         </tr>
     </thead>
     <tbody>
-        {% for person in emp_data.items %}
+        {% for entry in emp_data.items %}
             <tr>
-                {% for col_name in column_names %}
-                <td scope="row"> {{ person[col_name] }}</td>
-                {% endfor %}
+                <td scope="row">{{ entry.name }}</td>
+                <td scope="row">{{ entry.surname }}</td>
+                <td scope="row">{{ entry.date_of_bidth }}</td>
+                <td scope="row">{{ entry.salary }}</td>
+                <td scope="col">{{ entry.dept_name }}</td>
                 <td scope="row">
                     <div class="gap-2 d-md-flex justify-content-md-end">
-                    <button type="button" class="editBtn btn btn-warning"
-                            entry-id={{person.id}} user-name={{person.name}}>Edit</button>
+                        <button type="button" class="editBtn btn btn-warning"
+                            entry-id={{entry.id}} user-name={{entry.name}}>Edit</button>
 
-                    <button type="button" class="delBtn btn btn-danger"
-                            entry-id={{person.id}} user-name={{person.name}} >Delete</button>
+                        <button type="button" class="delBtn btn btn-danger"
+                            entry-id={{entry.id}} user-name={{entry.name}} >Delete</button>
                     </div>
                 </td>
             </tr>
@@ -93,7 +91,7 @@
 
 <!--Modal -->
 <div id="uniModal" class="modal">
-    <div class="modal-dialog modal-xl" id="modal-styling">
+    <div class="modal-dialog modal-lg" id="modal-styling">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="modal-title">Edit data</h5>
@@ -103,34 +101,33 @@
               <p>What's your edits?</p>
               <form action="/employees/edit" method="POST">
                   <input type="hidden" name="id" value="">
+                  <div class="table-responsive">
                   <table class="table">
                     <thead>
                         <tr>
-                            {% for col_name in column_names %}
-                                {% if col_name == "date_of_bidth" %}
-                                        <td scope="col"> Date of Birth </td>
-                                    {% elif col_name == "dept_name" %}
-                                        <td scope="col"> Department name </td>
-                                    {% else %}
-                                        <td scope="col"> {{ col_name.capitalize() }} </td>
-                                {% endif %}
-                            {% endfor %}
+                            <th scope="col">Name</th>
+                            <th scope="col">Surname</th>
+                            <th scope="col">Date of Birth</th>
+                            <th scope="col">Salary</th>
+                            <th scope="col">Department</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            {% for col_name in column_names %}
-                                {% if col_name == "date_of_bidth" %}
-                                    <td scope="row"><input class="main-input" type='date' name={{col_name}} max="2005-12-31"></td>
-                                {% elif col_name == "salary" %}
-                                    <td scope="row"><input class="main-input" type='number' name={{col_name}} placeholder="1000"></td>
-                                {% else %}
-                                    <td scope="row"><input class="main-input" type='text' name={{col_name}} placeholder={{col_name}}></td>
-                                {% endif %}
-                            {% endfor %}
+                            <td scope="row">
+                                <input class="main-input" type='text' name="name" placeholder="Name"></td>
+                            <td scope="row">
+                                <input class="main-input" type='text' name="surname" placeholder="Surname"></td>
+                            <td scope="row">
+                                <input class="main-input" type='date' name="date_of_bidth" max="2005-12-31"></td>
+                            <td scope="row">
+                                <input class="main-input" type='number' name="salary" placeholder="1000"></td>
+                            <td scope="row">
+                                <input class="main-input" type='text' name="dept_name" placeholder="Department"></td>
                         </tr>
                     </tbody>
                   </table>
+                  </div>
                   <button class="btn btn-warning" id="btn-submit" type="submit">Apply changes</button>
               </form>
           </div>

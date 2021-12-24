@@ -6,6 +6,15 @@ var delBtn = document.getElementsByClassName("delBtn");
 var editBtn = document.getElementsByClassName("editBtn");
 var addBtn = document.getElementById("addBtn");
 
+const modalTitle = uniModal.querySelector('#modal-title');
+const contentEdit = uniModal.querySelector('.modal-content p');
+const hiddenIdInput = uniModal.querySelector('.modal-body input');
+const tableContent = uniModal.querySelector('.table');
+const modalStyle = uniModal.querySelector('#modal-styling');
+const actionForm = uniModal.querySelector('form');
+const btnSubmit = uniModal.querySelector('#btn-submit');
+const inputRow = uniModal.querySelectorAll('.main-input');
+
 // When the user clicks on <span> (x), close the modal
 closeBtn.onclick = function() {
   uniModal.style.display = "none";
@@ -26,15 +35,6 @@ for (let i = 0; i < clsEditLen; i++) {
       const entryId = editBtn[i].getAttribute('entry-id');
       const userName = editBtn[i].getAttribute('user-name');
 
-      const modalTitle = uniModal.querySelector('#modal-title');
-      const contentEdit = uniModal.querySelector('.modal-content p');
-      const hiddenIdInput = uniModal.querySelector('.modal-body input');
-      const tableContent = uniModal.querySelector('.table');
-      const modalStyle = uniModal.querySelector('#modal-styling');
-      const actionForm = uniModal.querySelector('form');
-      const btnSubmit = uniModal.querySelector('#btn-submit');
-      const inputRow = uniModal.querySelectorAll('.main-input');
-
       modalTitle.textContent = "Edit entry";
       contentEdit.textContent = "What details about " + userName + " do you want to edit?";
       hiddenIdInput.value = entryId;
@@ -53,15 +53,6 @@ for (let i = 0; i < clsEditLen; i++) {
 
 addBtn.onclick = function() {
   uniModal.style.display = "block";
-
-  const modalTitle = uniModal.querySelector('#modal-title');
-  const contentEdit = uniModal.querySelector('.modal-content p');
-  const hiddenIdInput = uniModal.querySelector('.modal-body input');
-  const tableContent = uniModal.querySelector('.table');
-  const modalStyle = uniModal.querySelector('#modal-styling');
-  const actionForm = uniModal.querySelector('form');
-  const btnSubmit = uniModal.querySelector('#btn-submit');
-  const inputRow = uniModal.querySelectorAll('.main-input');
 
   modalTitle.textContent = "Add new entry";
   contentEdit.textContent = "Please fill in all fields carefully";
@@ -86,15 +77,6 @@ for (let i = 0; i < clsLen; i++) {
 
       const entryId = delBtn[i].getAttribute('entry-id');
       const userName = delBtn[i].getAttribute('user-name');
-
-      const modalTitle = uniModal.querySelector('#modal-title');
-      const contentEdit = uniModal.querySelector('.modal-content p');
-      const hiddenIdInput = uniModal.querySelector('.modal-body input');
-      const tableContent = uniModal.querySelector('.table');
-      const modalStyle = uniModal.querySelector('#modal-styling');
-      const actionForm = uniModal.querySelector('form');
-      const btnSubmit = uniModal.querySelector('#btn-submit');
-      const inputRow = uniModal.querySelectorAll('.main-input');
 
       modalTitle.textContent = "Delete entry";
       contentEdit.textContent = "Are you sure you want delete " + userName + "'s data?";

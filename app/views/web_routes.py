@@ -9,8 +9,7 @@ from app import db
 from app.models import Employee
 from app.service.services import DepartmentService, EmployeeService
 
-from flask import render_template, url_for, request, flash, redirect
-from sqlalchemy import func
+from flask import abort, render_template, url_for, request, flash, redirect
 from datetime import date
 
 
@@ -29,12 +28,10 @@ def index():
                            pagename="Homepage",
                            footer=footer)
 
-@web.route("/departments", defaults={'page_num': 1})
-@web.route("/departments/<int:page_num>")
-def departments(page_num):
-
-    dept_salary = DepartmentService.get_avg_salary()\
-        .paginate(per_page=2, page=page_num, error_out=True)
+@web.route("/departments", defaults={'page': 1})
+@web.route("/departments/<int:page>")
+def departments(page):
+    dept_salary = DepartmentService.get_avg_salary(paginate=True, page=page)
 
     return render_template("departments.html",
                            route_name="web.departments",
@@ -42,39 +39,32 @@ def departments(page_num):
                            menu=menu, title="Departments",
                            pagename="departments", footer="link")
 
-@web.route("/department/<dept_name>/", defaults={'page_num': 1})
-@web.route("/department/<dept_name>/<int:page_num>")
-def department(dept_name, page_num):
-    if_exists = DepartmentService.get_all().get_or_404(dept_name)
-    page_name = if_exists.name
-    dept_data = db.session.query \
-                (Employee.name, Employee.surname, Employee.date_of_bidth, Employee.salary) \
-                .select_from(Employee).filter_by(dept_name=dept_name) \
-                .paginate(per_page=2, page=page_num, error_out=True) \
+@web.route("/department/<dept_name>/", defaults={'page': 1})
+@web.route("/department/<dept_name>/<int:page>")
+def department(dept_name, page):
+    page_name = DepartmentService.get_by_name(dept_name)
+    if not page_name:
+        abort(404)
+
+    dept_data = EmployeeService.get_all_by_filters(paginate=True, page=page, dept_name=dept_name)
 
     return render_template("department.html",
                            route_name="web.department",
                            menu=menu,
                            dept_name=dept_name,
                            dept_data=dept_data,
-                           body=page_name.capitalize(),
-                           title=page_name.capitalize(),
+                           body=page_name.name.capitalize(),
+                           title=page_name.name.capitalize(),
                            footer="link")
 
 
 @web.route("/employees")
 def employees():
-    page_num = request.args.get("page_num", 1, type=int)
-    column_names = Employee.__table__.columns.keys()[1:]
-
-    emp_data = db.session\
-                .query(Employee)\
-                .order_by(Employee.dept_name)\
-                .paginate(per_page=2, page=page_num, error_out=True)
+    page = request.args.get("page", 1, type=int)
+    emp_data = EmployeeService.get_all(paginate=True, page=page)
 
     return render_template("employees.html",
                            route_name="web.employees",
-                           column_names=column_names,
                            emp_data=emp_data,
                            date_today=date.today(),
                            menu=menu,
@@ -85,8 +75,8 @@ def employees():
 
 @web.route("/employees/search", methods=["GET", "POST"])
 def search():
-    page_num = request.args.get('page_num', 1, type=int)
-    column_names = Employee.__table__.columns.keys()[1:]
+    page = request.args.get('page', 1, type=int)
+
 
     birthday_start = request.args.get("birthday_start", type=str)
     birthday_finish = request.args.get("birthday_finish", type=str)
@@ -100,11 +90,10 @@ def search():
             .filter(Employee.date_of_bidth >= birthday_start) \
             .filter(Employee.date_of_bidth <= birthday_finish) \
             .order_by(Employee.dept_name) \
-            .paginate(per_page=2, page=page_num, error_out=True)
+            .paginate(per_page=2, page=page, error_out=True)
 
         return render_template("employees.html",
                                route_name="web.search",
-                               column_names=column_names,
                                birthday_start=birthday_start,
                                birthday_finish=birthday_finish,
                                emp_data=filtered_result,
@@ -119,11 +108,10 @@ def search():
             .filter(Employee.date_of_bidth >= birthday_start) \
             .filter(Employee.date_of_bidth <= birthday_finish) \
             .order_by(Employee.dept_name) \
-            .paginate(per_page=2, page=page_num, error_out=True)
+            .paginate(per_page=2, page=page, error_out=True)
 
         return render_template("employees.html",
                                route_name="web.search",
-                               column_names=column_names,
                                birthday_start=birthday_start,
                                birthday_finish=birthday_finish,
                                emp_data=filtered_result,
@@ -135,32 +123,31 @@ def search():
 
 @web.route("/employees/edit", methods=["GET", "POST"])
 def edit_employee():
-    data_from_form = request.form
+    form_data = request.form
 
-    find_department = DepartmentService.get_by_name(data_from_form["dept_name"])
+    find_department = DepartmentService.get_by_name(form_data["dept_name"])
     if not find_department:
-        DepartmentService.add_dept(data_from_form["dept_name"])
+        DepartmentService.add_entry(form_data["dept_name"])
 
-    EmployeeService.edit_emp(data_from_form["id"], data_from_form)
+    EmployeeService.edit_entry(form_data)
     return redirect(url_for("web.employees"))
 
 @web.route("/employees/add", methods=["GET", "POST"])
 def add_employee():
-    data_from_form = request.form
-    find_department = DepartmentService.get_by_name(data_from_form["dept_name"])
+    form_data = request.form
+    find_department = DepartmentService.get_by_name(form_data["dept_name"])
 
     if not find_department:
-        DepartmentService.add_dept(data_from_form["dept_name"])
-    EmployeeService.add_emp(**data_from_form)
+        DepartmentService.add_entry(form_data["dept_name"])
+    EmployeeService.add_entry(**form_data)
 
     return redirect(url_for("web.employees"))
 
 
 @web.route("/employees/delete", methods=["GET", "POST"])
 def delete_employee():
-    delete_id = request.form["id"]
-    result = db.session.query(Employee).filter_by(id=delete_id).delete()
-    db.session.commit()
+    id = request.form["id"]
+    result = EmployeeService.delete_by_id(id)
 
     if result > 0:
         flash("Entry has been deleted.", "success")
