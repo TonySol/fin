@@ -13,8 +13,7 @@ from flask import abort, render_template, url_for, request, flash, redirect
 from datetime import date
 
 
-menu = {"Home": "web.index", "Departments": "web.departments", "Employee": "web.employee",
-        "Employees": "web.employees"}
+menu = {"Home": "web.index", "Departments": "web.departments", "Employees": "web.employees"}
 footer = "http://bengusta.com.ua"
 
 
@@ -42,7 +41,7 @@ def departments(page):
 @web.route("/department/<dept_name>/", defaults={'page': 1})
 @web.route("/department/<dept_name>/<int:page>")
 def department(dept_name, page):
-    page_name = DepartmentService.get_by_name(dept_name)
+    page_name = DepartmentService.get_by_prime_key(dept_name)
     if not page_name:
         abort(404)
 
@@ -61,7 +60,7 @@ def department(dept_name, page):
 @web.route("/employees")
 def employees():
     page = request.args.get("page", 1, type=int)
-    emp_data = EmployeeService.get_all(paginate=True, page=page)
+    emp_data = EmployeeService.get_all(paginate=True, page=page, per_page=3)
 
     return render_template("employees.html",
                            route_name="web.employees",
@@ -121,33 +120,33 @@ def search():
                                footer="link")
 
 
+@web.route("/employees/add", methods=["GET", "POST"])
+def add_employee():
+    form_data = request.form
+    find_department = DepartmentService.get_by_prime_key(form_data["dept_name"])
+
+    if not find_department:
+        DepartmentService.add_entry(name=form_data["dept_name"])
+    EmployeeService.add_entry(**form_data)
+
+    return redirect(url_for("web.employees"))
+
+
 @web.route("/employees/edit", methods=["GET", "POST"])
 def edit_employee():
     form_data = request.form
 
-    find_department = DepartmentService.get_by_name(form_data["dept_name"])
+    find_department = DepartmentService.get_by_prime_key(form_data["dept_name"])
     if not find_department:
         DepartmentService.add_entry(form_data["dept_name"])
 
     EmployeeService.edit_entry(form_data)
     return redirect(url_for("web.employees"))
 
-@web.route("/employees/add", methods=["GET", "POST"])
-def add_employee():
-    form_data = request.form
-    find_department = DepartmentService.get_by_name(form_data["dept_name"])
-
-    if not find_department:
-        DepartmentService.add_entry(form_data["dept_name"])
-    EmployeeService.add_entry(**form_data)
-
-    return redirect(url_for("web.employees"))
-
-
 @web.route("/employees/delete", methods=["GET", "POST"])
 def delete_employee():
     id = request.form["id"]
-    result = EmployeeService.delete_by_id(id)
+    result = EmployeeService.delete_by_prime_key(id)
 
     if result > 0:
         flash("Entry has been deleted.", "success")
@@ -155,11 +154,6 @@ def delete_employee():
         flash("Could not delete the entry", "fail")
     return redirect(url_for("web.employees"))
 
-
-@web.route("/employee", methods=["POST"])
-def employee():
-    return render_template("employee.html", menu=menu, title="Employee",
-                           pagename="Employee details", footer="link")
 
 @web.errorhandler(404)
 def page_not_found(_error):
