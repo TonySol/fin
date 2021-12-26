@@ -5,17 +5,13 @@ thus dealing with circular imports. Ha-ha!
 """
 
 from app.views import web
-from app import db
-from app.models import Employee
 from app.service.services import DepartmentService, EmployeeService
 
 from flask import abort, render_template, url_for, request, flash, redirect
 from datetime import date
 
-
 menu = {"Home": "web.index", "Departments": "web.departments", "Employees": "web.employees"}
 footer = "http://bengusta.com.ua"
-
 
 
 @web.route("/")
@@ -27,6 +23,7 @@ def index():
                            pagename="Homepage",
                            footer=footer)
 
+
 @web.route("/departments", defaults={'page': 1})
 @web.route("/departments/<int:page>")
 def departments(page):
@@ -37,6 +34,7 @@ def departments(page):
                            dept_salary=dept_salary,
                            menu=menu, title="Departments",
                            pagename="departments", footer="link")
+
 
 @web.route("/department/<dept_name>/", defaults={'page': 1})
 @web.route("/department/<dept_name>/<int:page>")
@@ -76,43 +74,35 @@ def employees():
 def search():
     page = request.args.get('page', 1, type=int)
 
-
-    birthday_start = request.args.get("birthday_start", type=str)
-    birthday_finish = request.args.get("birthday_finish", type=str)
+    start_date = request.args.get("start_date", type=str)
+    end_date = request.args.get("end_date", type=str)
 
     if request.method == "POST":
-        birthday_start = request.form["birthday_start"]
-        birthday_finish = request.form["birthday_finish"]
+        start_date = request.form["start_date"]
+        end_date = request.form["end_date"]
 
-        filtered_result = db.session \
-            .query(Employee) \
-            .filter(Employee.date_of_bidth >= birthday_start) \
-            .filter(Employee.date_of_bidth <= birthday_finish) \
-            .order_by(Employee.dept_name) \
-            .paginate(per_page=2, page=page, error_out=True)
+        filtered_result = EmployeeService.search_by_date(
+            paginate=True, page=page, per_page=2,
+            start_date=start_date, end_date=end_date)
 
         return render_template("employees.html",
                                route_name="web.search",
-                               birthday_start=birthday_start,
-                               birthday_finish=birthday_finish,
+                               start_date=start_date,
+                               end_date=end_date,
                                emp_data=filtered_result,
                                date_today=date.today(),
                                menu=menu,
                                title="List of all employees", pagename="employee list",
                                footer="link")
 
-    elif birthday_start or birthday_finish:
-        filtered_result = db.session \
-            .query(Employee) \
-            .filter(Employee.date_of_bidth >= birthday_start) \
-            .filter(Employee.date_of_bidth <= birthday_finish) \
-            .order_by(Employee.dept_name) \
-            .paginate(per_page=2, page=page, error_out=True)
+    elif start_date or end_date:
+        filtered_result = EmployeeService.search_by_date(paginate=True, page=page, per_page=2,
+                                                         start_date=start_date, end_date=end_date)
 
         return render_template("employees.html",
                                route_name="web.search",
-                               birthday_start=birthday_start,
-                               birthday_finish=birthday_finish,
+                               start_date=start_date,
+                               end_date=end_date,
                                emp_data=filtered_result,
                                date_today=date.today(),
                                menu=menu,
@@ -143,10 +133,11 @@ def edit_employee():
     EmployeeService.edit_entry(form_data)
     return redirect(url_for("web.employees"))
 
+
 @web.route("/employees/delete", methods=["GET", "POST"])
 def delete_employee():
-    id = request.form["id"]
-    result = EmployeeService.delete_by_prime_key(id)
+    entry_id = request.form["id"]
+    result = EmployeeService.delete_by_prime_key(entry_id)
 
     if result > 0:
         flash("Entry has been deleted.", "success")

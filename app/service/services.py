@@ -1,20 +1,25 @@
 from sqlalchemy import func
-from sqlalchemy.sql import text
 
 from app import db
 from app.models import Department, Employee
 
+
 class Service:
     TABLE_NAME = None
 
-    def paginate(function):
+    def paginate(self):
+        """self contains the function
+            cls is just a name to pass a class value
+            kwargs pass with func call in views
+        """
+
         def wrapper(cls, paginate=False, per_page=10, page=1, **kwargs):
             if paginate:
-                return function(cls, **kwargs).paginate(per_page=per_page, page=page)
+                return self(cls, **kwargs).paginate(per_page=per_page, page=page)
             else:
-                return function(cls, **kwargs).all()
-        return wrapper
+                return self(cls, **kwargs).all()
 
+        return wrapper
 
     @classmethod
     @paginate
@@ -38,13 +43,11 @@ class Service:
                 setattr(employee, key, value)
         db.session.commit()
 
-
     @classmethod
     def delete_by_prime_key(cls, id):
         result = db.session.query(cls.TABLE_NAME).filter_by(id=id).delete()
         db.session.commit()
         return result
-
 
     @classmethod
     @paginate
@@ -59,8 +62,8 @@ class DepartmentService(Service):
     @Service.paginate
     def get_avg_salary(cls):
         return db.session.query(Department.name, func.avg(Employee.salary)) \
-                                .select_from(Department).join(Employee) \
-                                .group_by(Department.name)
+            .select_from(Department).join(Employee) \
+            .group_by(Department.name)
 
 
 class EmployeeService(Service):
@@ -70,18 +73,10 @@ class EmployeeService(Service):
     def hello():
         return db.session.query(Employee)
 
-
     @classmethod
     @Service.paginate
     def search_by_date(cls, **kwargs):
-        return db.session.query(Employee)\
-                        .filter(Employee.date_of_bidth >= kwargs["birthday_start"])\
-                        .filter(Employee.date_of_bidth <= kwargs["birthday_finish"])\
-                        .order_by(Employee.dept_name)
-
-
-
-
-
-
-
+        return db.session.query(Employee) \
+            .filter(Employee.date_of_bidth >= kwargs["start_date"]) \
+            .filter(Employee.date_of_bidth <= kwargs["end_date"]) \
+            .order_by(Employee.dept_name)

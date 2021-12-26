@@ -37,10 +37,10 @@
 <h5>Search employees by date of birth</h5>
     <div class="mb-3">
         <label for="startDate" class="form-label">Born after:</label>
-        <input id="startDate" type="date" name="birthday_start" value={{date_today}}
+        <input id="startDate" type="date" name="start_date" value={{date_today}}
            min="1939-01-01" max={{date_today}}>
         <label for="endDate" class="form-label">Born before:</label>
-        <input id="endDate" type="date" name="birthday_finish" value={{date_today}}
+        <input id="endDate" type="date" name="end_date" value={{date_today}}
            min="1939-01-01" max={{date_today}}>
             <div class="col-auto">
         <button class="btn btn-primary" type="submit">Search</button>
@@ -87,7 +87,7 @@
 </table>
 </div>
 
-{{ pagination(emp_data, route_name, birthday_start=birthday_start, birthday_finish=birthday_finish) }}
+{{ pagination(emp_data, route_name, start_date=start_date, end_date=end_date) }}
 
 <!--Modal -->
 <div id="uniModal" class="modal">
