@@ -66,6 +66,12 @@ class DepartmentService(Service):
             .group_by(Department.name)
 
 
+    @classmethod
+    def delete_by_prime_key(cls, id):
+        result = db.session.query(cls.TABLE_NAME).filter_by(name=id).delete()
+        db.session.commit()
+        return result
+
 class EmployeeService(Service):
     TABLE_NAME = Employee
 
