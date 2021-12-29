@@ -3,7 +3,7 @@
 .env
 .idea
 lint_report.txt
-testing.db
+
 # Logs and databases #
 ######################
 *.log

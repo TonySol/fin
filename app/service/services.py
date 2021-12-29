@@ -8,9 +8,9 @@ class Service:
     TABLE_NAME = None
 
     def paginate(self):
-        """self contains the function
-            cls is just a name to pass a class value
-            kwargs pass with func call in views
+        """self holds a decorated function
+            cls is just a name to pass a parameters of class function
+            kwargs are passed from function call in views
         """
 
         def wrapper(cls, paginate=False, per_page=10, page=1, **kwargs):
@@ -61,7 +61,7 @@ class DepartmentService(Service):
     @classmethod
     @Service.paginate
     def get_avg_salary(cls):
-        return db.session.query(Department.name, func.avg(Employee.salary)) \
+        return db.session.query(Department.name, func.round(func.avg(Employee.salary))) \
             .select_from(Department).join(Employee) \
             .group_by(Department.name)
 
@@ -74,10 +74,6 @@ class DepartmentService(Service):
 
 class EmployeeService(Service):
     TABLE_NAME = Employee
-
-    @Service.paginate
-    def hello():
-        return db.session.query(Employee)
 
     @classmethod
     @Service.paginate
