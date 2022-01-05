@@ -24,8 +24,6 @@ class Config:
     SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{user}:{password}@{server}/{database}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    DEBUG = False
-
 
 class Development(Config):
     """Dev config with public server on"""
