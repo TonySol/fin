@@ -1,6 +1,8 @@
+from datetime import date
 from sqlalchemy import func
 
 from app import db
+from .validation import Validation
 from app.models import Department, Employee
 
 
@@ -37,7 +39,8 @@ class Service:
 
     @classmethod
     def edit_entry(cls, dict_of_edits):
-        employee = db.session.query(cls.TABLE_NAME).get(dict_of_edits["id"])
+        employee = db.session.query(cls.TABLE_NAME).get_or_404(dict_of_edits["id"])
+
         for key, value in dict_of_edits.items():
             if value:
                 setattr(employee, key, value)
@@ -55,7 +58,7 @@ class Service:
         return db.session.query(cls.TABLE_NAME).filter_by(**kwargs)
 
 
-class DepartmentService(Service):
+class DepartmentService(Service, Validation):
     TABLE_NAME = Department
 
     @classmethod
@@ -65,14 +68,14 @@ class DepartmentService(Service):
             .select_from(Department).join(Employee) \
             .group_by(Department.name)
 
-
     @classmethod
     def delete_by_prime_key(cls, id):
         result = db.session.query(cls.TABLE_NAME).filter_by(name=id).delete()
         db.session.commit()
         return result
 
-class EmployeeService(Service):
+
+class EmployeeService(Service, Validation):
     TABLE_NAME = Employee
 
     @classmethod
