@@ -5,7 +5,8 @@ thus dealing with circular imports. Ha-ha!
 """
 
 from app.views import web
-from app.service.services import DepartmentService, EmployeeService
+from app.service.services import DepartmentService as dept_service
+from app.service.services import EmployeeService as emp_servie
 
 from flask import abort, render_template, url_for, request, flash, redirect
 from datetime import date
@@ -27,8 +28,7 @@ def index():
 @web.route("/departments", defaults={'page': 1})
 @web.route("/departments/<int:page>")
 def departments(page):
-    dept_salary = DepartmentService.get_avg_salary(paginate=True, page=page)
-
+    dept_salary = dept_service.get_avg_salary(paginate=True, page=page)
     return render_template("departments.html",
                            route_name="web.departments",
                            dept_salary=dept_salary,
@@ -39,11 +39,11 @@ def departments(page):
 @web.route("/department/<dept_name>/", defaults={'page': 1})
 @web.route("/department/<dept_name>/<int:page>")
 def department(dept_name, page):
-    page_name = DepartmentService.get_by_prime_key(dept_name)
+    page_name = dept_service.get_by_prime_key(dept_name)
     if not page_name:
         abort(404)
 
-    dept_data = EmployeeService.get_all_by_filters(paginate=True, page=page, dept_name=dept_name)
+    dept_data = emp_servie.get_all_by_filters(paginate=True, page=page, dept_name=dept_name)
 
     return render_template("department.html",
                            route_name="web.department",
@@ -58,7 +58,7 @@ def department(dept_name, page):
 @web.route("/employees")
 def employees():
     page = request.args.get("page", 1, type=int)
-    emp_data = EmployeeService.get_all(paginate=True, page=page, per_page=3)
+    emp_data = emp_servie.get_all(paginate=True, page=page, per_page=3)
 
     return render_template("employees.html",
                            route_name="web.employees",
@@ -81,9 +81,8 @@ def search():
         start_date = request.form["start_date"]
         end_date = request.form["end_date"]
 
-        filtered_result = EmployeeService.search_by_date(
-            paginate=True, page=page, per_page=2,
-            start_date=start_date, end_date=end_date)
+        filtered_result = emp_servie.search_by_date(paginate=True, page=page, per_page=2,
+                                                        start_date=start_date, end_date=end_date)
 
         return render_template("employees.html",
                                route_name="web.search",
@@ -96,7 +95,7 @@ def search():
                                footer="link")
 
     elif start_date or end_date:
-        filtered_result = EmployeeService.search_by_date(paginate=True, page=page, per_page=2,
+        filtered_result = emp_servie.search_by_date(paginate=True, page=page, per_page=2,
                                                          start_date=start_date, end_date=end_date)
 
         return render_template("employees.html",
@@ -112,32 +111,38 @@ def search():
 
 @web.route("/employees/add", methods=["GET", "POST"])
 def add_employee():
-    form_data = request.form
-    find_department = DepartmentService.get_by_prime_key(form_data["dept_name"])
+    validated = emp_servie.validate(request.form)
+    if not isinstance(validated, dict):
+        flash(f"Can't add this entry {validated}")
+        return redirect(url_for("web.employees"))
 
+    find_department = dept_service.get_by_prime_key(validated["dept_name"])
     if not find_department:
-        DepartmentService.add_entry(name=form_data["dept_name"])
-    EmployeeService.add_entry(**form_data)
+        dept_service.add_entry(name=validated["dept_name"])
 
+    emp_servie.add_entry(**validated)
     return redirect(url_for("web.employees"))
 
 
 @web.route("/employees/edit", methods=["GET", "POST"])
 def edit_employee():
-    form_data = request.form
+    validated = emp_servie.validate(request.form)
+    if not isinstance(validated, dict):
+        flash(f"Could not edit the entry: {validated}")
+        return redirect(url_for("web.employees"))
 
-    find_department = DepartmentService.get_by_prime_key(form_data["dept_name"])
+    find_department = dept_service.get_by_prime_key(validated["dept_name"])
     if not find_department:
-        DepartmentService.add_entry(form_data["dept_name"])
+        dept_service.add_entry(validated["dept_name"])
 
-    EmployeeService.edit_entry(form_data)
+    emp_servie.edit_entry(validated)
     return redirect(url_for("web.employees"))
 
 
 @web.route("/employees/delete", methods=["GET", "POST"])
 def delete_employee():
     entry_id = request.form["id"]
-    result = EmployeeService.delete_by_prime_key(entry_id)
+    result = emp_servie.delete_by_prime_key(entry_id)
 
     if result > 0:
         flash("Entry has been deleted.", "success")
@@ -146,7 +151,12 @@ def delete_employee():
     return redirect(url_for("web.employees"))
 
 
-@web.errorhandler(404)
-def page_not_found(_error):
+@web.app_errorhandler(404)
+def page_not_found(error):
     return render_template("404.html", menu=menu, title="404 page not found", footer="link"), \
            404
+
+@web.app_errorhandler(500)
+def internal_error(error):
+    # db.session.rollback()
+    return render_template('500.html', menu=menu, title="500 error has occurred", footer="link"), 500
