@@ -110,9 +110,10 @@ class EmployeeService(Service, Validation):
             entry_id = entry["id"]
 
         employee = cls.get_by_id(entry_id)
-        dept_name = entry["dept_name"]
+        if entry["dept_name"]:
+            cls.__dept_exists(dept_name)
 
-        if employee and cls.__dept_exists(dept_name):
+        if employee:
             for key, value in entry.items():
                 if value:
                     setattr(employee, key, value)

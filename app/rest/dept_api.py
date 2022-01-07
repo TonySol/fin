@@ -8,7 +8,7 @@ Integrated JWT to handle naaccess.
 from . import api
 from . import api_bp
 
-from flask_restful import Resource, reqparse, inputs, fields, marshal_with, abort
+from flask_restful import Resource, reqparse, fields, marshal_with, abort
 from app.service.services import DepartmentService as dept_service
 
 from flask import jsonify
@@ -61,7 +61,11 @@ class DepartmentItem(Resource):
 
     def put(self, name):
         args = parser.parse_args(strict=True)
-        result = dept_service.edit_entry(args, entry_id=name)
+        validated = dept_service.validate(args)
+        if not isinstance(validated, dict):
+            return f"Could not edit the entry: {validated}", 404
+
+        result = dept_service.edit_entry(entry=validated, entry_id=name)
         if result:
             return f"The entry with id:{name} was changed successfully", 201
         return f"The entry with id:{name} does not exists.", 404
@@ -85,7 +89,11 @@ class DepartmenteList(Resource):
     def post(self):
         args = parser.parse_args(strict=True)
         if all(i for i in args.values()):
-            dept_service.add_entry(args)
+            validated = dept_service.validate(args)
+            if not isinstance(validated, dict):
+                return f"Could not add the entry: {validated}", 404
+
+            dept_service.add_entry(entry=validated)
             return f"The entry with {args} was added successfully", 201
         return f"The entry is missing some fields.", 404
 
@@ -96,4 +104,4 @@ class DepartmenteList(Resource):
             result = dept_service.delete_by_id(name)
             if result:
                 deleted_names.append(name)
-        return f"The following entries have been deleted seccessfully", 204
+        return f"The following entries have been deleted successfully", 204
