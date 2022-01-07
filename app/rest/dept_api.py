@@ -46,7 +46,7 @@ resource_fields = {
 }
 
 parser = reqparse.RequestParser()
-parser.add_argument('name', type=str, location='json')
+parser.add_argument('name', type=str)
 
 
 @api.resource('/department/<string:name>')
@@ -72,14 +72,14 @@ class DepartmentItem(Resource):
 
     def delete(self, name):
         result = dept_service.delete_by_id(name)
-        if result:
-            return "The entry has been deleted seccessfully", 204
+        if result > 0:
+            return 204
         return f"The entry with id:{name} does not exists.", 404
 
 @api.resource('/department')
 class DepartmenteList(Resource):
     parser_copy = parser.copy()
-    parser_copy.replace_argument('name', type=list, location='json')
+    parser_copy.replace_argument('name', action="append")
 
     @marshal_with(resource_fields)
     def get(self):
@@ -104,4 +104,4 @@ class DepartmenteList(Resource):
             result = dept_service.delete_by_id(name)
             if result:
                 deleted_names.append(name)
-        return f"The following entries have been deleted successfully", 204
+        return f"The following entries have been deleted successfully: {deleted_names}", 200

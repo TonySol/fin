@@ -13,11 +13,11 @@ resource_fields = {
 }
 
 parser = reqparse.RequestParser()
-parser.add_argument('name', type=str, location='json')
-parser.add_argument('surname', type=str, location='json')
-parser.add_argument('salary', type=str, location='json')
-parser.add_argument('date_of_bidth', type=str, location='json')
-parser.add_argument('dept_name', type=str, location='json')
+parser.add_argument('name', type=str)
+parser.add_argument('surname', type=str)
+parser.add_argument('salary', type=str)
+parser.add_argument('date_of_bidth', type=str)
+parser.add_argument('dept_name', type=str)
 
 
 @api.resource('/employee/<int:id>')
@@ -44,7 +44,7 @@ class EmployeeItem(Resource):
     def delete(self, id):
         result = emp_service.delete_by_id(id)
         if result:
-            return "The entry has been deleted successfully", 204
+            return 204
         return f"The employee with id:{id} does not exists.", 404
 
 @api.resource('/employee')
