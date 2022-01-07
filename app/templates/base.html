@@ -18,11 +18,9 @@
 
   </head>
   <body>
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
 
-
-
-      <div class="container-fluid">
+      <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="/index">Cofee matching</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -58,14 +56,13 @@
             <button class="btn btn-outline-success" type="submit">Search</button>
           </form>
         </div>
-      </div>
-    </nav>
+      </nav>
 
-    <div class="conteiner" style="margin-top: 58px">
-      <div class="container-fluid">
+      <div style="margin-top: 58px">
         {% block content %}
         {% endblock content %}
       </div>
+
     </div>
 
     <!--    Footer-->

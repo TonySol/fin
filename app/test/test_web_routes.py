@@ -9,7 +9,11 @@ from app import start_app, db
 class TestWebViews(TestCase):
     @classmethod
     def setUpClass(cls):
-        """Makes a test db in temp file, populates it and pushes app context"""
+        """Makes a test db in temp file, populates it and pushes app context
+
+        creates a test client, which allows to preserve a request context after request was handled
+        this helps get all request execution details for tests,
+        """
         cls.file_handle, cls.file_path = tempfile.mkstemp()
         Test.SQLALCHEMY_DATABASE_URI = f'sqlite:///{cls.file_path}'
 
@@ -23,7 +27,10 @@ class TestWebViews(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """Removes db by closing link to the temp file, and removes app context"""
+        """Removes db by closing link to the temp file, and removes app context
+
+        Call destruction of request and app context manually, because test_client blocks the
+        automatic stack clean up. Or unittest will leak memory."""
         db.session.remove()
         os.close(cls.file_handle)
         os.unlink(cls.file_path)

@@ -39,7 +39,7 @@ def departments(page):
 @web.route("/department/<dept_name>/", defaults={'page': 1})
 @web.route("/department/<dept_name>/<int:page>")
 def department(dept_name, page):
-    page_name = dept_service.get_by_prime_key(dept_name)
+    page_name = dept_service.get_by_id(dept_name)
     if not page_name:
         abort(404)
 
@@ -116,11 +116,7 @@ def add_employee():
         flash(f"Can't add this entry {validated}")
         return redirect(url_for("web.employees"))
 
-    find_department = dept_service.get_by_prime_key(validated["dept_name"])
-    if not find_department:
-        dept_service.add_entry(name=validated["dept_name"])
-
-    emp_servie.add_entry(**validated)
+    emp_servie.add_entry(validated)
     return redirect(url_for("web.employees"))
 
 
@@ -131,18 +127,19 @@ def edit_employee():
         flash(f"Could not edit the entry: {validated}")
         return redirect(url_for("web.employees"))
 
-    find_department = dept_service.get_by_prime_key(validated["dept_name"])
-    if not find_department:
-        dept_service.add_entry(validated["dept_name"])
 
-    emp_servie.edit_entry(validated)
-    return redirect(url_for("web.employees"))
+    result = emp_servie.edit_entry(validated)
+    if result:
+        return redirect(url_for("web.employees"))
+    else:
+        flash(f"The employee with {validated['id']} id does not exists.")
+        return redirect(url_for("web.employees"))
 
 
 @web.route("/employees/delete", methods=["GET", "POST"])
 def delete_employee():
     entry_id = request.form["id"]
-    result = emp_servie.delete_by_prime_key(entry_id)
+    result = emp_servie.delete_by_id(entry_id)
 
     if result > 0:
         flash("Entry has been deleted.", "success")

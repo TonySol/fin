@@ -8,7 +8,7 @@ Integrated JWT to handle naaccess.
 from . import api
 from . import api_bp
 
-from flask_restful import Resource, reqparse, inputs, fields, marshal_with
+from flask_restful import Resource, reqparse, inputs, fields, marshal_with, abort
 from app.service.services import DepartmentService as dept_service
 
 from flask import jsonify
@@ -45,23 +45,55 @@ resource_fields = {
     'name': fields.String,
 }
 
-class DepartmenteItem(Resource):
-    parser = reqparse.RequestParser()
-    parser.add_argument('name', type=str, required=True)
+parser = reqparse.RequestParser()
+parser.add_argument('name', type=str, location='json')
 
+
+@api.resource('/department/<string:name>')
+class DepartmentItem(Resource):
 
     @marshal_with(resource_fields)
     def get(self, name):
-        result = dept_service.get_by_prime_key(name)
+        result = dept_service.get_by_id(name)
+        if not result:
+            abort(404, message=f"Can't find entry with id {name}")
         return result
 
     def put(self, name):
-        args = self.parser.parse_args(strict=True)
-        task = {}
-        return task, 201
+        args = parser.parse_args(strict=True)
+        result = dept_service.edit_entry(args, entry_id=name)
+        if result:
+            return f"The entry with id:{name} was changed successfully", 201
+        return f"The entry with id:{name} does not exists.", 404
 
-class DepartmentList(Resource):
-    pass
+    def delete(self, name):
+        result = dept_service.delete_by_id(name)
+        if result:
+            return "The entry has been deleted seccessfully", 204
+        return f"The entry with id:{name} does not exists.", 404
 
-api.add_resource(DepartmenteItem, '/department/<string:name>')
-api.add_resource(DepartmentList, '/department')
+@api.resource('/department')
+class DepartmenteList(Resource):
+    parser_copy = parser.copy()
+    parser_copy.replace_argument('name', type=list, location='json')
+
+    @marshal_with(resource_fields)
+    def get(self):
+        result = dept_service.get_all()
+        return result
+
+    def post(self):
+        args = parser.parse_args(strict=True)
+        if all(i for i in args.values()):
+            dept_service.add_entry(args)
+            return f"The entry with {args} was added successfully", 201
+        return f"The entry is missing some fields.", 404
+
+    def delete(self):
+        args = self.parser_copy.parse_args(strict=True)
+        deleted_names = []
+        for name in args["name"]:
+            result = dept_service.delete_by_id(name)
+            if result:
+                deleted_names.append(name)
+        return f"The following entries have been deleted seccessfully", 204

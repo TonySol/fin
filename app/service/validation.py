@@ -25,7 +25,7 @@ class Validation:
     def __check_integer(value):
         try:
             value = int(value)
-            if 0 < value < 2147483647:
+            if 0 > value < 2147483647:
                 return f"The {value} exceeds the max length."
             return True
         except ValueError:
@@ -44,7 +44,7 @@ class Validation:
     def __check_date(value):
         try:
             date_input = date.fromisoformat(value)
-            if date(1940, 1, 1) < date_input < date(2006, 1, 1):
+            if date(1940, 1, 1) > date_input < date(2006, 1, 1):
                 return f"Have some sympathy, the man is out of appropriate age to exploit him"
             return True
         except ValueError:
