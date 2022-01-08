@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import func
+from sqlalchemy import func, desc
 
 from app import db
 from .validation import Validation
@@ -69,15 +69,9 @@ class DepartmentService(Service, Validation):
     @classmethod
     @Service.paginate
     def get_avg_salary(cls):
-        return db.session.query(Department.name, func.round(func.avg(Employee.salary))) \
-            .select_from(Department).join(Employee) \
-            .group_by(Department.name)
-
-    @classmethod
-    def delete_by_id(cls, id):
-        result = db.session.query(cls.TABLE_NAME).filter_by(name=id).delete()
-        db.session.commit()
-        return result
+        return db.session.query(Department.name, func.round(func.avg(Employee.salary)).label("avg_salary")) \
+            .select_from(Department).outerjoin(Employee) \
+            .group_by(Department.name).order_by(desc("avg_salary"))
 
 
 class EmployeeService(Service, Validation):
@@ -85,7 +79,7 @@ class EmployeeService(Service, Validation):
 
     @staticmethod
     def __dept_exists(dept_name):
-        find_department = DepartmentService.get_by_id(dept_name)
+        find_department = DepartmentService.get_all_by_filters(name=dept_name)
         if not find_department:
             DepartmentService.add_entry({"name": dept_name})
             return True
@@ -111,7 +105,7 @@ class EmployeeService(Service, Validation):
 
         employee = cls.get_by_id(entry_id)
         if entry["dept_name"]:
-            cls.__dept_exists(dept_name)
+            cls.__dept_exists(entry["dept_name"])
 
         if employee:
             for key, value in entry.items():

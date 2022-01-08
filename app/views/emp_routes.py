@@ -5,54 +5,10 @@ thus dealing with circular imports. Ha-ha!
 """
 
 from app.views import web
-from app.service.services import DepartmentService as dept_service
 from app.service.services import EmployeeService as emp_servie
 
-from flask import abort, render_template, url_for, request, flash, redirect
 from datetime import date
-
-menu = {"Home": "web.index", "Departments": "web.departments", "Employees": "web.employees"}
-footer = "http://bengusta.com.ua"
-
-
-@web.route("/")
-@web.route("/index")
-def index():
-    return render_template("index.html",
-                           menu=menu,
-                           title="Search for employees in depts",
-                           pagename="Homepage",
-                           footer=footer)
-
-
-@web.route("/departments", defaults={'page': 1})
-@web.route("/departments/<int:page>")
-def departments(page):
-    dept_salary = dept_service.get_avg_salary(paginate=True, page=page)
-    return render_template("departments.html",
-                           route_name="web.departments",
-                           dept_salary=dept_salary,
-                           menu=menu, title="Departments",
-                           pagename="departments", footer="link")
-
-
-@web.route("/department/<dept_name>/", defaults={'page': 1})
-@web.route("/department/<dept_name>/<int:page>")
-def department(dept_name, page):
-    page_name = dept_service.get_by_id(dept_name)
-    if not page_name:
-        abort(404)
-
-    dept_data = emp_servie.get_all_by_filters(paginate=True, page=page, dept_name=dept_name)
-
-    return render_template("department.html",
-                           route_name="web.department",
-                           menu=menu,
-                           dept_name=dept_name,
-                           dept_data=dept_data,
-                           body=page_name.name.capitalize(),
-                           title=page_name.name.capitalize(),
-                           footer="link")
+from flask import render_template, url_for, request, flash, redirect
 
 
 @web.route("/employees")
@@ -64,10 +20,8 @@ def employees():
                            route_name="web.employees",
                            emp_data=emp_data,
                            date_today=date.today(),
-                           menu=menu,
                            title="List of all employees",
-                           pagename="employee list",
-                           footer="link")
+                           pagename="employee list")
 
 
 @web.route("/employees/search", methods=["GET", "POST"])
@@ -90,9 +44,7 @@ def search():
                                end_date=end_date,
                                emp_data=filtered_result,
                                date_today=date.today(),
-                               menu=menu,
-                               title="List of all employees", pagename="employee list",
-                               footer="link")
+                               title="List of all employees", pagename="employee list")
 
     elif start_date or end_date:
         filtered_result = emp_servie.search_by_date(paginate=True, page=page, per_page=2,
@@ -104,9 +56,7 @@ def search():
                                end_date=end_date,
                                emp_data=filtered_result,
                                date_today=date.today(),
-                               menu=menu,
-                               title="List of all employees", pagename="employee list",
-                               footer="link")
+                               title="List of all employees", pagename="employee list")
 
 
 @web.route("/employees/add", methods=["GET", "POST"])
@@ -146,14 +96,3 @@ def delete_employee():
     else:
         flash("Could not delete the entry", "fail")
     return redirect(url_for("web.employees"))
-
-
-@web.app_errorhandler(404)
-def page_not_found(error):
-    return render_template("404.html", menu=menu, title="404 page not found", footer="link"), \
-           404
-
-@web.app_errorhandler(500)
-def internal_error(error):
-    # db.session.rollback()
-    return render_template('500.html', menu=menu, title="500 error has occurred", footer="link"), 500

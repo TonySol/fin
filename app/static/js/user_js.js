@@ -8,8 +8,8 @@ var addBtn = document.getElementById("addBtn");
 
 const modalTitle = uniModal.querySelector('#modal-title');
 const contentEdit = uniModal.querySelector('.modal-content p');
-const hiddenIdInput = uniModal.querySelector('.modal-body input');
-const tableContent = uniModal.querySelector('.table');
+const hiddenIdInput = uniModal.querySelector('#hidden-id');
+const inputFields = uniModal.querySelector('#input-fields');
 const modalStyle = uniModal.querySelector('#modal-styling');
 const actionForm = uniModal.querySelector('form');
 const btnSubmit = uniModal.querySelector('#btn-submit');
@@ -34,14 +34,15 @@ for (let i = 0; i < clsEditLen; i++) {
 
       const entryId = editBtn[i].getAttribute('entry-id');
       const userName = editBtn[i].getAttribute('user-name');
+      const actionName = editBtn[i].getAttribute('action-name');
 
       modalTitle.textContent = "Edit entry";
       contentEdit.textContent = "What details about " + userName + " do you want to edit?";
       hiddenIdInput.value = entryId;
-      tableContent.setAttribute('style', 'display: block');
-      modalStyle.setAttribute('class', 'modal-dialog modal-xl');
+      inputFields.removeAttribute('style');
+      modalStyle.setAttribute('class', 'modal-dialog');
       btnSubmit.setAttribute('class', 'btn btn-warning');
-      actionForm.setAttribute('action', '/employees/edit');
+      actionForm.setAttribute('action', actionName);
       btnSubmit.textContent = "Apply Changes";
 
       inputRow.forEach(make);
@@ -54,13 +55,15 @@ for (let i = 0; i < clsEditLen; i++) {
 addBtn.onclick = function() {
   uniModal.style.display = "block";
 
+  const actionName = addBtn.getAttribute('action-name');
+
   modalTitle.textContent = "Add new entry";
   contentEdit.textContent = "Please fill in all fields carefully";
   hiddenIdInput.removeAttribute("name");
-  tableContent.setAttribute('style', 'display: block');
-  modalStyle.setAttribute('class', 'modal-dialog modal-xl');
+  inputFields.removeAttribute('style');
+  modalStyle.setAttribute('class', 'modal-dialog');
   btnSubmit.setAttribute('class', 'btn btn-warning');
-  actionForm.setAttribute('action', '/employees/add');
+  actionForm.setAttribute('action', actionName);
   btnSubmit.textContent = "Add new entry";
 
   inputRow.forEach(make);
@@ -77,14 +80,15 @@ for (let i = 0; i < clsLen; i++) {
 
       const entryId = delBtn[i].getAttribute('entry-id');
       const userName = delBtn[i].getAttribute('user-name');
+      const actionName = delBtn[i].getAttribute('action-name');
 
       modalTitle.textContent = "Delete entry";
-      contentEdit.textContent = "Are you sure you want delete " + userName + "'s data?";
+      contentEdit.textContent = "Are you sure you want delete " + userName + "?";
       hiddenIdInput.value = entryId;
-      tableContent.setAttribute('style', 'display: none');
+      inputFields.setAttribute('style', 'display: none');
       modalStyle.setAttribute('class', 'modal-dialog');
       btnSubmit.setAttribute('class', 'btn btn-danger');
-      actionForm.setAttribute('action', '/employees/delete');
+      actionForm.setAttribute('action', actionName);
       btnSubmit.textContent = "Delete";
 
       inputRow.forEach(make);

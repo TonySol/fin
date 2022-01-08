@@ -29,7 +29,7 @@ class Validation:
                 return f"The {value} exceeds the max length."
             return True
         except ValueError:
-            return f"The {value} is not of required data type."
+            return f"\"{value}\" is not of required data type."
 
     @staticmethod
     def __check_string(value):

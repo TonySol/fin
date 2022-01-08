@@ -1,5 +1,6 @@
 {% extends "base.html"  %}
 {% from "macros.html" import pagination %}
+{% from "macros.html" import modal_employee %}
 
 {% block content %}
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -51,7 +52,7 @@
 
 
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-    <button type="button" class="btn btn-primary" id="addBtn">Add New Entry</button>
+    <button type="button" class="btn btn-primary" id="addBtn" action-name="/employees/add">Add New Entry</button>
 </div>
 <div class="table-responsive">
 <table class="table align-middle table-striped table-hover">
@@ -75,10 +76,10 @@
                 <td scope="row">
                     <div class="gap-2 d-md-flex justify-content-md-end">
                         <button type="button" class="editBtn btn btn-warning"
-                            entry-id={{entry.id}} user-name={{entry.name}}>Edit</button>
+                            entry-id="{{entry.id}}" user-name="{{entry.name}}" action-name="/employees/edit">Edit</button>
 
                         <button type="button" class="delBtn btn btn-danger"
-                            entry-id={{entry.id}} user-name={{entry.name}} >Delete</button>
+                            entry-id="{{entry.id}}" user-name="{{entry.name}}" action-name="/employees/delete" >Delete</button>
                     </div>
                 </td>
             </tr>
@@ -88,52 +89,8 @@
 </div>
 
 {{ pagination(emp_data, route_name, start_date=start_date, end_date=end_date) }}
+{{ modal_employee() }}
 
-<!--Modal -->
-<div id="uniModal" class="modal">
-    <div class="modal-dialog modal-lg" id="modal-styling">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modal-title">Edit data</h5>
-            <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              <p>What's your edits?</p>
-              <form action="/employees/edit" method="POST">
-                  <input type="hidden" name="id" value="">
-                  <div class="table-responsive">
-                  <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Surname</th>
-                            <th scope="col">Date of Birth</th>
-                            <th scope="col">Salary</th>
-                            <th scope="col">Department</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td scope="row">
-                                <input class="main-input" type='text' name="name" placeholder="Name"></td>
-                            <td scope="row">
-                                <input class="main-input" type='text' name="surname" placeholder="Surname"></td>
-                            <td scope="row">
-                                <input class="main-input" type='date' name="date_of_bidth" max="2005-12-31"></td>
-                            <td scope="row">
-                                <input class="main-input" type='number' name="salary" placeholder="1000"></td>
-                            <td scope="row">
-                                <input class="main-input" type='text' name="dept_name" placeholder="Department"></td>
-                        </tr>
-                    </tbody>
-                  </table>
-                  </div>
-                  <button class="btn btn-warning" id="btn-submit" type="submit">Apply changes</button>
-              </form>
-          </div>
-        </div>
-    </div>
-</div>
 
 {% endblock content %}
 
