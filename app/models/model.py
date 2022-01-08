@@ -6,11 +6,12 @@ from app import db
 
 class Department(db.Model):
     """Parent table for Employee"""
-    name = db.Column(db.String(20), primary_key=True, index=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    name = db.Column(db.String(20), unique=True)
     employees = db.relationship('Employee', backref='department', passive_deletes=True, lazy=True)
 
     def __repr__(self):
-        return self.name
+        return self.id, self.name
 
 
 class Employee(db.Model):

@@ -3,10 +3,9 @@
 :env: choose production class or dev(uses Public HOST) class
 :routes: api-routes via blueprint, user-routes via method aka constructor
 """
-import os
+
 import logging
 from logging.handlers import RotatingFileHandler
-
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -28,7 +27,7 @@ def start_app(config_option):
     app.config.from_object(config_option)
 
     db.init_app(app)
-    migrate.init_app(app, db)
+    migrate.init_app(app, db, directory="app/migrations")
     jwt.init_app(app)
 
     from app.views import web
