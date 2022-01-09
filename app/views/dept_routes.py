@@ -32,7 +32,7 @@ def department(dept_name, page):
                            title=dept_name.capitalize())
 
 
-@web.route("/departments/add", methods=["GET", "POST"])
+@web.route("/department/add", methods=["GET", "POST"])
 def add_department():
     validated = dept_service.validate(request.form)
     if not isinstance(validated, dict):
@@ -43,7 +43,7 @@ def add_department():
     return redirect(url_for("web.departments"))
 
 
-@web.route("/departments/edit", methods=["GET", "POST"])
+@web.route("/department/edit", methods=["GET", "POST"])
 def edit_department():
     validated = dept_service.validate(request.form)
     if isinstance(validated, str):
@@ -55,9 +55,9 @@ def edit_department():
     return redirect(url_for("web.departments"))
 
 
-@web.route("/departments/delete", methods=["GET", "POST"])
+@web.route("/department/delete", methods=["GET", "POST"])
 def delete_department():
-    result = dept_service.delete_by_id(request.form)
+    result = dept_service.delete_by_id(request.form["id"])
     if result > 0:
         flash("Entry has been deleted.", "success")
     else:
