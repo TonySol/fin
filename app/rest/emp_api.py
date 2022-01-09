@@ -1,6 +1,6 @@
 from . import api
 
-from flask_restful import Resource, reqparse, fields, marshal_with, abort
+from flask_restful import Resource, reqparse, fields, marshal_with, abort, inputs
 from app.service.services import EmployeeService as emp_service
 
 resource_fields = {
@@ -16,7 +16,7 @@ parser = reqparse.RequestParser()
 parser.add_argument('name', type=str)
 parser.add_argument('surname', type=str)
 parser.add_argument('salary', type=str)
-parser.add_argument('date_of_bidth', type=str)
+parser.add_argument('date_of_bidth', type=inputs.date)
 parser.add_argument('dept_name', type=str)
 
 
