@@ -46,17 +46,13 @@ def add_department():
 @web.route("/departments/edit", methods=["GET", "POST"])
 def edit_department():
     validated = dept_service.validate(request.form)
-    if not isinstance(validated, dict):
+    if isinstance(validated, str):
         flash(f"Could not edit the entry: {validated}")
-        return redirect(url_for("web.departments"))
-
-
-    result = dept_service.edit_entry(validated)
-    if result:
-        return redirect(url_for("web.departments"))
     else:
-        flash(f"The employee with {validated['id']} id does not exists.")
-        return redirect(url_for("web.departments"))
+        result = dept_service.edit_entry(validated)
+        if not result:
+            flash(f"The department with {validated['id']} id does not exists.")
+    return redirect(url_for("web.departments"))
 
 
 @web.route("/departments/delete", methods=["GET", "POST"])

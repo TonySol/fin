@@ -1,5 +1,9 @@
 from datetime import date
 
+from app import db
+from app.models import Department
+
+
 class Validation:
     TABLE_NAME = None
 
@@ -50,33 +54,39 @@ class Validation:
         except ValueError:
             return f"The {value} should be of \"Year-Mon-Date\" or ISO format."
 
+    @staticmethod
+    def __check_dept_exist(form_data):
+        if db.session.query(Department).filter_by(name=form_data["dept_name"]).all():
+            return True
+        return "Failed: check if such department exist."
+
     @classmethod
     def validate(cls, form_data):
-        for key, value in form_data.items():
-            data_type = cls.__get_col_datatype(cls.TABLE_NAME, key)
-            max_length = cls.__get_col_length(cls.TABLE_NAME, key)
+        if cls.__name__ == "EmployeeService" and form_data["dept_name"] \
+                and cls.__check_dept_exist(form_data) is not True:
+            return "Failed: check if such department exist."
+        else:
+            for key, value in form_data.items():
+                data_type = cls.__get_col_datatype(cls.TABLE_NAME, key)
+                max_length = cls.__get_col_length(cls.TABLE_NAME, key)
 
-            if value:
-                if cls.__check_col_exist(cls.TABLE_NAME, key) is not True:
-                    return f"The table does not contain [{key}] column name."
+                if value:
+                    if cls.__check_col_exist(cls.TABLE_NAME, key) is not True:
+                        return f"The table does not contain [{key}] column name."
 
-                elif value.isspace():
-                    return f"Empty [{key}] field is not allowed"
+                    elif value.isspace():
+                        return f"Empty [{key}] field is not allowed"
 
-                elif max_length and (len(value) > max_length or len(value) > 2000000):
-                    return f"The {value} should be positive and comply with max length of [{key}]."
+                    elif max_length and (len(value) > max_length or len(value) > 2000000):
+                        return f"The {value} should be positive and fit max length of [{key}]."
 
-                elif isinstance(int(1), data_type):
-                    if cls.__check_integer(value) is not True:
+                    elif isinstance(int(1), data_type) and cls.__check_integer(value) is not True:
                         return cls.__check_integer(value)
 
-                elif isinstance(str("a"), data_type):
-                    if cls.__check_string(value) is not True:
+                    elif isinstance(str("a"), data_type) and cls.__check_string(value) is not True:
                         return cls.__check_string(value)
 
-                elif isinstance(date.today(), data_type):
-                    if cls.__check_date(value) is not True:
+                    elif isinstance(date.today(), data_type) and cls.__check_date(
+                            value) is not True:
                         return cls.__check_date(value)
-
         return form_data
-

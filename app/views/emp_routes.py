@@ -73,17 +73,13 @@ def add_employee():
 @web.route("/employees/edit", methods=["GET", "POST"])
 def edit_employee():
     validated = emp_servie.validate(request.form)
-    if not isinstance(validated, dict):
+    if isinstance(validated, str):
         flash(f"Could not edit the entry: {validated}")
-        return redirect(url_for("web.employees"))
-
-
-    result = emp_servie.edit_entry(validated)
-    if result:
-        return redirect(url_for("web.employees"))
     else:
-        flash(f"The employee with {validated['id']} id does not exists.")
-        return redirect(url_for("web.employees"))
+        result = emp_servie.edit_entry(validated)
+        if not result:
+            flash("Couldn't edit the entry: check if such employee exist.")
+    return redirect(url_for("web.employees"))
 
 
 @web.route("/employees/delete", methods=["GET", "POST"])

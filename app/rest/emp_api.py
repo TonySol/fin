@@ -32,14 +32,16 @@ class EmployeeItem(Resource):
 
     def put(self, id):
         args = parser.parse_args(strict=True)
+        args["id"] = str(id)
         validated = emp_service.validate(args)
-        if not isinstance(validated, dict):
+
+        if isinstance(validated, str):
             return f"Could not edit the entry: {validated}", 404
 
-        result = emp_service.edit_entry(entry=validated, entry_id=id)
+        result = emp_service.edit_entry(validated)
         if result:
             return f"The entry with id:{id} was changed successfully", 201
-        return f"The employee with id:{id} does not exists.", 404
+        return "Couldn't edit the entry: check if such employee exist.", 404
 
     def delete(self, id):
         result = emp_service.delete_by_id(id)
@@ -59,10 +61,10 @@ class EmployeeList(Resource):
         args = parser.parse_args(strict=True)
         if all(i for i in args.values()):
             validated = emp_service.validate(args)
-            if not isinstance(validated, dict):
+            if isinstance(validated, str):
                 return f"Could not add the entry: {validated}", 404
 
-            emp_service.add_entry(entry=validated)
+            emp_service.add_entry(validated)
             return f"The entry with {args} was added successfully", 201
         return f"The entry is missing required fields.", 404
 

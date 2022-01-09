@@ -23,6 +23,10 @@ class Service:
 
         return wrapper
 
+    @staticmethod
+    def __remove_id_val(form_data):
+        return {k: v for k, v in form_data.items() if k != "id"}
+
     @classmethod
     @paginate
     def get_all(cls):
@@ -33,20 +37,19 @@ class Service:
         return db.session.query(cls.TABLE_NAME).get(key)
 
     @classmethod
-    def add_entry(cls, entry):
-        db.session.add(cls.TABLE_NAME(**entry))
+    def add_entry(cls, form_data):
+        id_removed = cls.__remove_id_val(form_data)
+        db.session.add(cls.TABLE_NAME(**id_removed))
         db.session.commit()
 
     @classmethod
-    def edit_entry(cls, entry, entry_id=None):
-        if entry_id is None:
-            entry_id = entry["id"]
-
-        employee = cls.get_by_id(entry_id)
-        if employee:
-            for key, value in entry.items():
+    def edit_entry(cls, form_data):
+        entry = cls.get_by_id(form_data["id"])
+        if entry:
+            id_removed = cls.__remove_id_val(form_data)
+            for key, value in id_removed.items():
                 if value:
-                    setattr(employee, key, value)
+                    setattr(entry, key, value)
             db.session.commit()
             return True
         return False
@@ -69,48 +72,19 @@ class DepartmentService(Service, Validation):
     @classmethod
     @Service.paginate
     def get_avg_salary(cls):
-        return db.session.query(Department.name, func.round(func.avg(Employee.salary)).label("avg_salary")) \
-            .select_from(Department).outerjoin(Employee) \
-            .group_by(Department.name).order_by(desc("avg_salary"))
+        return db.session\
+                .query(Department.name, func.round(func.avg(Employee.salary)).label("avg_salary")) \
+                .select_from(Department).outerjoin(Employee) \
+                .group_by(Department.name).order_by(desc("avg_salary"))
 
 
 class EmployeeService(Service, Validation):
     TABLE_NAME = Employee
 
-    @staticmethod
-    def __dept_exists(dept_name):
-        find_department = DepartmentService.get_all_by_filters(name=dept_name)
-        if not find_department:
-            DepartmentService.add_entry({"name": dept_name})
-            return True
-        return True
-
     @classmethod
     @Service.paginate
     def search_by_date(cls, **kwargs):
         return db.session.query(Employee) \
-            .filter(Employee.date_of_bidth >= kwargs["start_date"]) \
-            .filter(Employee.date_of_bidth <= kwargs["end_date"]) \
-            .order_by(Employee.dept_name)
-
-    @classmethod
-    def add_entry(cls, entry):
-        if cls.__dept_exists(entry["dept_name"]):
-            super().add_entry(entry)
-
-    @classmethod
-    def edit_entry(cls, entry, entry_id=None):
-        if entry_id is None:
-            entry_id = entry["id"]
-
-        employee = cls.get_by_id(entry_id)
-        if entry["dept_name"]:
-            cls.__dept_exists(entry["dept_name"])
-
-        if employee:
-            for key, value in entry.items():
-                if value:
-                    setattr(employee, key, value)
-            db.session.commit()
-            return True
-        return False
+                .filter(Employee.date_of_bidth >= kwargs["start_date"]) \
+                .filter(Employee.date_of_bidth <= kwargs["end_date"]) \
+                .order_by(Employee.dept_name)

@@ -42,44 +42,44 @@ def getdata():
 
 
 resource_fields = {
-    'name': fields.String,
+    'id': fields.Integer,
+    'name': fields.String
 }
 
 parser = reqparse.RequestParser()
 parser.add_argument('name', type=str)
 
 
-@api.resource('/department/<string:name>')
+@api.resource('/department/<int:id>')
 class DepartmentItem(Resource):
 
     @marshal_with(resource_fields)
-    def get(self, name):
-        result = dept_service.get_by_id(name)
+    def get(self, id):
+        result = dept_service.get_by_id(id)
         if not result:
-            abort(404, message=f"Can't find entry with id {name}")
+            abort(404, message=f"Can't find entry with id {id}")
         return result
 
-    def put(self, name):
+    def put(self, id):
         args = parser.parse_args(strict=True)
+        args["id"] = str(id)
         validated = dept_service.validate(args)
-        if not isinstance(validated, dict):
+        if isinstance(validated, str):
             return f"Could not edit the entry: {validated}", 404
 
-        result = dept_service.edit_entry(entry=validated, entry_id=name)
+        result = dept_service.edit_entry(entry=validated, entry_id=id)
         if result:
-            return f"The entry with id:{name} was changed successfully", 201
-        return f"The entry with id:{name} does not exists.", 404
+            return f"The entry with id:{id} was changed successfully", 201
+        return f"The entry with id:{id} does not exists.", 404
 
-    def delete(self, name):
-        result = dept_service.delete_by_id(name)
+    def delete(self, id):
+        result = dept_service.delete_by_id(id)
         if result > 0:
             return 204
-        return f"The entry with id:{name} does not exists.", 404
+        return f"The entry with id:{id} does not exists.", 404
 
 @api.resource('/department')
 class DepartmenteList(Resource):
-    parser_copy = parser.copy()
-    parser_copy.replace_argument('name', action="append")
 
     @marshal_with(resource_fields)
     def get(self):
@@ -90,7 +90,7 @@ class DepartmenteList(Resource):
         args = parser.parse_args(strict=True)
         if all(i for i in args.values()):
             validated = dept_service.validate(args)
-            if not isinstance(validated, dict):
+            if isinstance(validated, str):
                 return f"Could not add the entry: {validated}", 404
 
             dept_service.add_entry(entry=validated)
@@ -98,10 +98,11 @@ class DepartmenteList(Resource):
         return f"The entry is missing some fields.", 404
 
     def delete(self):
-        args = self.parser_copy.parse_args(strict=True)
-        deleted_names = []
-        for name in args["name"]:
-            result = dept_service.delete_by_id(name)
+        parser.add_argument('id', action="append")
+        args = self.parser.parse_args(strict=True)
+        deleted_id = []
+        for dept_id in args["id"]:
+            result = dept_service.delete_by_id(dept_id)
             if result:
-                deleted_names.append(name)
-        return f"The following entries have been deleted successfully: {deleted_names}", 200
+                deleted_id.append(dept_id)
+        return f"The following entries have been deleted successfully: {deleted_id}", 200

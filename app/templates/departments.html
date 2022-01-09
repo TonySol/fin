@@ -53,7 +53,7 @@
     <tbody>
     {% for entry in dept_salary.items %}
         <tr>
-            <td scope="row">{{ entry.name }}</td>
+            <td scope="row"><a href="{{ url_for( 'web.department', dept_name=entry.name, page=1) }}">{{ entry.name }}</td>
             <td scope="row">{{ entry.avg_salary }}</td>
             <td scope="row">
                 <div class="gap-2 d-md-flex justify-content-md-end">
