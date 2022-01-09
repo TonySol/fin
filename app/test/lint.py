@@ -37,7 +37,7 @@ def parse_report(line):
     return round(float(rate))
 
 
-def check_rate(min_rate=7, verbouse=False):
+def check_rate(min_rate=8, verbose=False):
     """Checks the code rating agains the set value
 
     :min_rate: set the accepteble code rating to get exit(0)
@@ -56,7 +56,7 @@ def check_rate(min_rate=7, verbouse=False):
     if rate >= min_rate:
         exit(0)
     else:
-        if verbouse:
+        if verbose:
             with open(report, "r") as file:
                 print(file.read())
                 exit(1)

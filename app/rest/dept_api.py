@@ -18,28 +18,28 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 
 
-@api_bp.route("/login", methods=["POST"])
-def login():
-    """Login route – a gateway api access"""
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
-    if username != "admin" or password != "admin":
-        return jsonify({"msg": "Bad username or password"}), 401
-
-    access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token)
-
-
-@api_bp.route("/getdata", methods=["GET"])
-@jwt_required()
-def getdata():
-    """Simple get data request route
-
-    Works via jwt identifier.
-    """
-    current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
-
+# @api_bp.route("/login", methods=["POST"])
+# def login():
+#     """Login route – a gateway api access"""
+#     username = request.json.get("username", None)
+#     password = request.json.get("password", None)
+#     if username != "admin" or password != "admin":
+#         return jsonify({"msg": "Bad username or password"}), 401
+#
+#     access_token = create_access_token(identity=username)
+#     return jsonify(access_token=access_token)
+#
+#
+# @api_bp.route("/getdata", methods=["GET"])
+# @jwt_required()
+# def getdata():
+#     """Simple get data request route
+#
+#     Works via jwt identifier.
+#     """
+#     current_user = get_jwt_identity()
+#     return jsonify(logged_in_as=current_user), 200
+#
 
 resource_fields = {
     'id': fields.Integer,
@@ -58,7 +58,7 @@ class DepartmentItem(Resource):
         result = dept_service.get_by_id(id)
         if not result:
             abort(404, message=f"Can't find entry with id {id}")
-        return result
+        return result, 200
 
     def put(self, id):
         args = parser.parse_args(strict=True)
@@ -67,7 +67,7 @@ class DepartmentItem(Resource):
         if isinstance(validated, str):
             return f"Could not edit the entry: {validated}", 404
 
-        result = dept_service.edit_entry(entry=validated, entry_id=id)
+        result = dept_service.edit_entry(validated)
         if result:
             return f"The entry with id:{id} was changed successfully", 201
         return f"The entry with id:{id} does not exists.", 404
@@ -93,7 +93,7 @@ class DepartmenteList(Resource):
             if isinstance(validated, str):
                 return f"Could not add the entry: {validated}", 404
 
-            dept_service.add_entry(entry=validated)
+            dept_service.add_entry(validated)
             return f"The entry with {args} was added successfully", 201
         return f"The entry is missing some fields.", 404
 

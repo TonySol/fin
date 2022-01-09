@@ -73,9 +73,9 @@ class DepartmentService(Service, Validation):
     @Service.paginate
     def get_avg_salary(cls):
         return db.session\
-                .query(Department.name, func.round(func.avg(Employee.salary)).label("avg_salary")) \
+                .query(Department.id, Department.name, func.round(func.avg(Employee.salary)).label("avg_salary")) \
                 .select_from(Department).outerjoin(Employee) \
-                .group_by(Department.name).order_by(desc("avg_salary"))
+                .group_by(Department.id, Department.name).order_by(desc("avg_salary"))
 
 
 class EmployeeService(Service, Validation):

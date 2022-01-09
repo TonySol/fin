@@ -24,7 +24,7 @@ class Employee(db.Model):
     surname = db.Column(db.String(20), nullable=False)
     date_of_bidth = db.Column(db.Date, index=True)
     salary = db.Column(db.Integer, nullable=False)
-    dept_name = db.Column(db.String(20), db.ForeignKey('department.name', ondelete='CASCADE'))
+    dept_name = db.Column(db.String(20), db.ForeignKey('department.name', ondelete='CASCADE', onupdate='CASCADE'))
 
     def __repr__(self):
         return f"This is employee. – {self.name}, {self.surname} from dept – {self.dept_name}."

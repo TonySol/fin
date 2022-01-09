@@ -8,55 +8,45 @@ from app.views import web
 from app.service.services import EmployeeService as emp_servie
 
 from datetime import date
-from flask import render_template, url_for, request, flash, redirect
+from flask import render_template, url_for, request, flash, redirect, session
 
 
-@web.route("/employees")
-def employees():
-    page = request.args.get("page", 1, type=int)
+@web.route("/employees", defaults={'page': 1})
+@web.route("/employees/<int:page>")
+def employees(page):
     emp_data = emp_servie.get_all(paginate=True, page=page, per_page=3)
-
-    return render_template("employees.html",
-                           route_name="web.employees",
-                           emp_data=emp_data,
-                           date_today=date.today(),
-                           title="List of all employees",
+    return render_template("employees.html", route_name="web.employees", emp_data=emp_data,
+                           date_today=date.today(), title="List of all employees",
                            pagename="employee list")
 
 
 @web.route("/employees/search", methods=["GET", "POST"])
 def search():
+    """Search db for date of birth. Uses sessions/cookies to store requested dates between pages"""
     page = request.args.get('page', 1, type=int)
-
-    start_date = request.args.get("start_date", type=str)
-    end_date = request.args.get("end_date", type=str)
 
     if request.method == "POST":
         start_date = request.form["start_date"]
         end_date = request.form["end_date"]
+        session["date"] = [start_date, end_date]
 
         filtered_result = emp_servie.search_by_date(paginate=True, page=page, per_page=2,
-                                                        start_date=start_date, end_date=end_date)
+                                        start_date=start_date, end_date=end_date)
 
-        return render_template("employees.html",
-                               route_name="web.search",
-                               start_date=start_date,
-                               end_date=end_date,
-                               emp_data=filtered_result,
-                               date_today=date.today(),
-                               title="List of all employees", pagename="employee list")
+        return render_template("employees.html", route_name="web.search", emp_data=filtered_result,
+                               date_today=date.today(), title="Search by birthday results",
+                               pagename="employee list")
 
-    elif start_date or end_date:
+
+    elif session["date"]:
+        start_date = session["date"][0]
+        end_date = session["date"][1]
         filtered_result = emp_servie.search_by_date(paginate=True, page=page, per_page=2,
-                                                         start_date=start_date, end_date=end_date)
+                                        start_date=start_date, end_date=end_date)
 
-        return render_template("employees.html",
-                               route_name="web.search",
-                               start_date=start_date,
-                               end_date=end_date,
-                               emp_data=filtered_result,
-                               date_today=date.today(),
-                               title="List of all employees", pagename="employee list")
+        return render_template("employees.html", route_name="web.search", emp_data=filtered_result,
+                               date_today=date.today(), title="Search by birthday results",
+                               pagename="employee list")
 
 
 @web.route("/employees/add", methods=["GET", "POST"])
