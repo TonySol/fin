@@ -23,16 +23,18 @@ class TestServices(TestCase):
         cls.app_context = cls.app.app_context()
         cls.app_context.push()
 
-
         db.create_all()
 
         dept1 = Department(name="Test_dept1")
         dept2 = Department(name="Test_dept2")
-        emp1 = Employee(id=1, name="John", surname="Smith", date_of_bidth=date(2000, 1, 1), salary=1503,
+        emp1 = Employee(id=1, name="John", surname="Smith", date_of_bidth=date(2000, 1, 1),
+                        salary=1503,
                         dept_name="Test_dept1")
-        emp2 = Employee(id=2, name="Ostin", surname="Powers", date_of_bidth=date(1990, 1, 1), salary=1500,
+        emp2 = Employee(id=2, name="Ostin", surname="Powers", date_of_bidth=date(1990, 1, 1),
+                        salary=1500,
                         dept_name="Test_dept1")
-        emp3 = Employee(id=3, name="Black", surname="Widow", date_of_bidth=date(1960, 1, 1), salary=999,
+        emp3 = Employee(id=3, name="Black", surname="Widow", date_of_bidth=date(1960, 1, 1),
+                        salary=999,
                         dept_name="Test_dept2")
         db.session.add(dept1)
         db.session.add(dept2)
@@ -58,33 +60,39 @@ class TestServices(TestCase):
         result_paginated = DepartmentService.get_all(paginate=True)
         self.assertEqual("Pagination", result_paginated.__class__.__name__)
 
-    def test_get_by_prime_key(self):
-        self.assertIsNotNone(DepartmentService.get_by_prime_key("Test_dept1"))
-        self.assertIsNone(DepartmentService.get_by_prime_key("Not Exist"))
+    def test_get_by_id(self):
+        self.assertIsNotNone(DepartmentService.get_by_id(1))
+        self.assertIsNone(DepartmentService.get_by_id(5))
 
     def test_add_entry(self):
         entry = {"id": 4, "name": "Vova", "surname": "ThiLvova",
                  "date_of_bidth": date(1980, 1, 1), "salary": 1500, "dept_name": "Test_dept2"}
-        EmployeeService.add_entry(**entry)
-        self.assertIsNotNone(db.session.query(Employee).get(3))
 
-        DepartmentService.add_entry(name="New")
-        self.assertIsNotNone(db.session.query(Department).get("New"))
+        EmployeeService.add_entry(entry)
+        self.assertIsNotNone(db.session.query(Employee).get(4))
+
+        DepartmentService.add_entry({"name":"New"})
+        self.assertTrue(db.session.query(Department).filter_by(name="New"))
 
     def test_edit_entry(self):
-        # DepartmentService.edit_entry({"name": "Test_dept2", "name": "Test_dept3"})
-        # result = db.session.query(Department).get("Test_dept3").name
-        # self.assertEqual("Test_dept3", result)
-
         EmployeeService.edit_entry({"id": 1, "surname": "Wick"})
         result = db.session.query(Employee).get(1).surname
         self.assertEqual("Wick", result)
 
-    def test_delete_by_prime_key(self):
+    def test_delete_by_id(self):
         before_result = db.session.query(Department).count()
-        DepartmentService.delete_by_prime_key("Test_dept2")
+        DepartmentService.delete_by_id(2)
         result = db.session.query(Department).count()
         self.assertEqual(before_result - 1, result)
+
+    def test_get_all_by_filters(self):
+        result = EmployeeService.get_all_by_filters(dept_name="Test_dept1", salary=1503)
+        self.assertEqual(1, len(result))
+        self.assertEqual("John", result[0].name)
+
+        result_paginated = EmployeeService.get_all_by_filters(paginate=True,
+                                                              dept_name="Test_dept1", salary=1503)
+        self.assertEqual("Pagination", result_paginated.__class__.__name__)
 
     def test_get_avg_salary(self):
         result = DepartmentService.get_avg_salary()
@@ -93,23 +101,13 @@ class TestServices(TestCase):
         result_paginated = DepartmentService.get_avg_salary(paginate=True)
         self.assertEqual("Pagination", result_paginated.__class__.__name__)
 
-    def test_get_all_by_filters(self):
-        result = EmployeeService.get_all_by_filters(dept_name="Test_dept1", salary=1503)
-        self.assertEqual(1, len(result))
-        self.assertEqual("John", result[0].name)
-
-        result_paginated = EmployeeService.get_all_by_filters(paginate=True,
-                                                    dept_name="Test_dept1", salary=1503)
-        self.assertEqual("Pagination", result_paginated.__class__.__name__)
-
-
     def test_search_by_date(self):
         result = EmployeeService.search_by_date(start_date=date(2000, 1, 1),
                                                 end_date=date(2020, 1, 1))
         self.assertEqual("John", result[0].name)
 
         result2 = EmployeeService.search_by_date(start_date=date(1990, 1, 1),
-                                                end_date=date(2020, 1, 1))
+                                                 end_date=date(2020, 1, 1))
         self.assertEqual(2, len(result2))
 
         result_paginated = EmployeeService.search_by_date(paginate=True,
@@ -117,9 +115,9 @@ class TestServices(TestCase):
                                                           end_date=date(2020, 1, 1))
         self.assertEqual("Pagination", result_paginated.__class__.__name__)
 
-        #negative test
+        # negative test
         result_negative = EmployeeService.search_by_date(start_date=date(2020, 1, 1),
-                                                        end_date=date(2019, 1, 1))
+                                                         end_date=date(2019, 1, 1))
         self.assertFalse(result_negative)
 
 
