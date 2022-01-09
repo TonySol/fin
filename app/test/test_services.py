@@ -96,7 +96,7 @@ class TestServices(TestCase):
 
     def test_get_avg_salary(self):
         result = DepartmentService.get_avg_salary()
-        self.assertEqual(1502, result[0][1])
+        self.assertEqual(1502, result[0][2])
 
         result_paginated = DepartmentService.get_avg_salary(paginate=True)
         self.assertEqual("Pagination", result_paginated.__class__.__name__)
