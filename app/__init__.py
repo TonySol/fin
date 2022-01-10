@@ -10,11 +10,9 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
 migrate = Migrate()
-jwt = JWTManager()
 
 
 def start_app(config_option):
@@ -28,7 +26,6 @@ def start_app(config_option):
 
     db.init_app(app)
     migrate.init_app(app, db, directory="app/migrations")
-    jwt.init_app(app)
 
     from app.views import web
     app.register_blueprint(web)

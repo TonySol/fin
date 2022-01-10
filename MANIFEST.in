@@ -1,0 +1,4 @@
+include requirements.txt
+graft app/static
+graft app/templates
+graft app/migrations
