@@ -90,7 +90,6 @@ class TestWebViews(TestCase):
 
     def test_post_department(self):
         response = self.client.post('api/department', json=self.DEPT_JSON)
-        print(response.data)
         self.assertEqual(201, response.status_code)
 
         check = self.client.get('api/department')
@@ -100,7 +99,7 @@ class TestWebViews(TestCase):
         response = self.client.post('api/department', json={'foo': 'bar'})
         self.assertEqual(400, response.status_code)
 
-        response = self.client.post('api/department', json={'name': ''})
+        response = self.client.post('api/department', json={'name': '124'})
         self.assertEqual(404, response.status_code)
 
     def test_get_employee(self):
@@ -148,7 +147,6 @@ class TestWebViews(TestCase):
 
         response = self.client.post('api/employee', json={'name': ''})
         self.assertEqual(404, response.status_code)
-
 
 if __name__ == "__main__":
     main()

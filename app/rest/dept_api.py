@@ -6,16 +6,15 @@ Integrated JWT to handle naaccess.
 """
 
 from . import api
-from . import api_bp
 
 from flask_restful import Resource, reqparse, fields, marshal_with, abort
 from app.service.services import DepartmentService as dept_service
 
-from flask import jsonify
-from flask import request
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
+# from flask import jsonify
+# from flask import request
+# from flask_jwt_extended import create_access_token
+# from flask_jwt_extended import get_jwt_identity
+# from flask_jwt_extended import jwt_required
 
 
 # @api_bp.route("/login", methods=["POST"])
@@ -96,13 +95,3 @@ class DepartmenteList(Resource):
             dept_service.add_entry(validated)
             return f"The entry with {args} was added successfully", 201
         return f"The entry is missing some fields.", 404
-
-    def delete(self):
-        parser.add_argument('id', action="append")
-        args = self.parser.parse_args(strict=True)
-        deleted_id = []
-        for dept_id in args["id"]:
-            result = dept_service.delete_by_id(dept_id)
-            if result:
-                deleted_id.append(dept_id)
-        return f"The following entries have been deleted successfully: {deleted_id}", 200
