@@ -13,7 +13,7 @@ install:
   - pip install -r requirements.txt
 
 script:
-  - python app/test/lint.py -6
+  - python fin/app/test/lint.py -6
   - coverage run -m unittest
   - coverage report
 
