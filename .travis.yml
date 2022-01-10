@@ -9,9 +9,12 @@ install:
   - pip install -r requirements.txt
 
 script:
-  - python test/lint.py
+  - python fin/app/test/lint.py -6
+  - coverage run -m unittest
+  - coverage report
 
 after_success:
+  - coveralls
   - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then bash auto-merge.sh; fi'
 
 notifications:

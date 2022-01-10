@@ -1,0 +1,85 @@
+{% macro pagination(pagination_obj, template_name) %}
+<div xmlns="http://www.w3.org/1999/html">
+    {%- for page in pagination_obj.iter_pages() %}
+        {% if page %}
+            {% if kwargs %}
+            <a href="{{ url_for(template_name, page=page, **kwargs) }}" > {{ page }} </a>
+            {% else %}
+            <a href="{{ url_for(template_name, page=page) }}" > {{ page }} </a>
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro modal_employee() %}
+<div id="uniModal" class="modal">
+    <div class="modal-dialog modal-lg" id="modal-styling">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-title">Edit data</h5>
+            <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <p>What's your edits?</p>
+              <form action="/employees/edit" method="POST">
+                      <div class="row"  id="input-fields">
+                        <input id="hidden-id" type="hidden" name="id" value="">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
+                            <input class="main-input form-control" type='text' name="name" placeholder="Name">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Surname</span>
+                            <input class="main-input form-control" type='text' name="surname" placeholder="Surname">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Date of Birth</span>
+                            <input class="main-input form-control" type='date' name="date_of_bidth" max="2005-12-31">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Salary</span>
+                            <input class="main-input form-control" type='number' name="salary" placeholder="1000">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Department</span>
+                            <input class="main-input form-control" type='text' name="dept_name" placeholder="Department">
+                        </div>
+                      </div>
+                  <button class="btn btn-warning" id="btn-submit" type="submit">Apply changes</button>
+              </form>
+          </div>
+        </div>
+    </div>
+</div>
+
+{% endmacro %}
+
+{% macro modal_dept() %}
+<div id="uniModal" class="modal">
+    <div class="modal-dialog modal-lg" id="modal-styling">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-title">Edit data</h5>
+            <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <p>What's your edits?</p>
+              <form action="/department/edit" method="POST">
+                  <input id="hidden-id" type="hidden" name="id" value="">
+                  <div class="row"  id="input-fields">
+                      <div class="input-group mb-3">
+                          <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
+                          <input class="main-input form-control" type='text' name="name" placeholder="Name">
+                      </div>
+                  </div>
+                  <button class="btn btn-warning" id="btn-submit" type="submit">Apply changes</button>
+              </form>
+          </div>
+        </div>
+    </div>
+</div>
+
+{% endmacro %}

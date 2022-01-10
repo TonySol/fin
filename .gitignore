@@ -3,6 +3,7 @@
 .env
 .idea
 lint_report.txt
+.coverage
 # Logs and databases #
 ######################
 *.log
