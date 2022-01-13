@@ -5,4 +5,4 @@ source = app/
 [report]
 skip_empty = True
 omit = app/test/*
-        app/migrations/*
+       app/migrations/*

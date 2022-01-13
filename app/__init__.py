@@ -1,7 +1,15 @@
-"""Ignition file: starts flask, apps, prepares env, gets routes, db
+"""Root package. Initialises flask web app via start_app method
 
-:env: choose production class or dev(uses Public HOST) class
-:routes: api-routes via blueprint, user-routes via method aka constructor
+Holds subpackages:
+– `migrations`: holds migration files to manage DB schemas
+– `models`: holds DB models in form of classes
+– `rest`: holds modules with REST API implementation
+– `service`: holds modules with classes to work with DB and validate user input
+– `static`: holds static files (e.g. scripts and css) for web app
+– `templates`: holds html-templates for a web app
+– `test`: holds modules with unittests
+– `views`: holds modules with web controllers
+
 """
 
 import logging
@@ -10,16 +18,22 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
 migrate = Migrate()
-jwt = JWTManager()
 
 
 def start_app(config_option):
-    """This factory pattern is used to run extensions on multiple apps if needed.
+    """Initialises web app using factory pattern.
 
+    Registers flask blueprints. Configures logging.
+
+    :param config_option: accepts configuration in form of object (class) to supply app on start
+    :type config_option: class `config`
+
+    :return: the flask web app instance
+
+    All extensions are supplied with app withing the function.
     No worries about flask application-specific states stored on a "global" extension.
     The one extension object is bound only to the exactly one flask app with its specific states.
     """
@@ -28,7 +42,6 @@ def start_app(config_option):
 
     db.init_app(app)
     migrate.init_app(app, db, directory="app/migrations")
-    jwt.init_app(app)
 
     from app.views import web
     app.register_blueprint(web)
@@ -58,5 +71,3 @@ def start_app(config_option):
 #     dept.name = "Asus"
 #     db.session.add(dept)
 #     db.session.commit()
-
-
