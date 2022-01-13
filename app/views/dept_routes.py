@@ -106,5 +106,5 @@ def delete_department():
     if result > 0:
         flash("Entry has been deleted.", "success")
     else:
-        flash("Could not delete the entry", "fail")
+        flash("Could not delete the entry.", "fail")
     return redirect(url_for("web.departments"))

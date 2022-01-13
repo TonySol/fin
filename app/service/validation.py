@@ -1,6 +1,6 @@
 """Module with a class used to validate user input before calling services"""
 
-from datetime import date
+from datetime import date, datetime
 
 from app import db
 from app.models.model import Department
@@ -74,7 +74,8 @@ class Validation:
         Checks if required entry exists in the parent table.
         Obtains DB column requirements from the model (datatype, max length, etc).
         Checks user input against DB requirements.
-
+        :param cls: provides class of the service thus class of model to check against
+        :type cls: :class:
         :param form_data: unvalidated user input in the form of dict.
         :type form_data: dict
         :return: dict with user input or string with description of validation fail.
@@ -88,14 +89,14 @@ class Validation:
 
         else:
             for key, value in form_data.items():
+                if cls.__check_col_exist(cls.TABLE_NAME, key) is not True:
+                    return f"The table does not contain [{key}] column name."
+
                 data_type = cls.__get_col_datatype(cls.TABLE_NAME, key)
                 max_length = cls.__get_col_length(cls.TABLE_NAME, key)
 
                 if value:
-                    if cls.__check_col_exist(cls.TABLE_NAME, key) is not True:
-                        return f"The table does not contain [{key}] column name."
-
-                    elif not type(date) and value.isspace():
+                    if isinstance(value, str) and value.isspace():
                         return f"Empty [{key}] field is not allowed"
 
                     elif max_length and (len(value) > max_length or len(value) > 2000000):
@@ -107,7 +108,8 @@ class Validation:
                     elif isinstance(str("a"), data_type) and cls.__check_string(value) is not True:
                         return cls.__check_string(value)
 
-                    elif not type(date) and isinstance(date.today(), data_type) \
+                    elif not isinstance(value, datetime) and isinstance(date.today(), data_type) \
                             and cls.__check_date_string(value) is not True:
                         return cls.__check_date_string(value)
+
         return form_data

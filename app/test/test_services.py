@@ -10,8 +10,8 @@ from app.service.services import DepartmentService, EmployeeService
 
 class TestServices(TestBase):
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUp(cls):
+        super().setUp()
 
         dept1 = Department(name="Test_dept1")
         dept2 = Department(name="Test_dept2")

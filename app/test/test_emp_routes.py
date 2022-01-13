@@ -8,24 +8,25 @@ from app.models.model import Department, Employee
 
 
 class TestWebViews(TestBase):
-    DEPT_FORM = {"name": "Add Edit"}
+    DEPT_FORM_ADD = {"name": "Add"}
+    DEPT_FORM_EDIT = {"id": 2, "name": "Edit"}
     EMP_FORM = {"id": 4, "name": "Vova", "surname": "Thi Lvova",
-                "date_of_bidth": date(1980, 1, 1), "salary": 1500, "dept_name": "Test_dept1"}
+                "date_of_bidth": None, "salary": 1500, "dept_name": "TestDept"}
 
     @classmethod
-    def setUpClass(cls):
+    def setUp(cls):
         """Makes a test db in temp file, populates it and pushes app context
 
         creates a test client, which allows to preserve a request context after request was handled
         this helps get all request execution details for tests,
         """
-        super().setUpClass()
+        super().setUp()
 
-        dept1 = Department(name="Test_dept1")
+        dept1 = Department(name="TestDept")
         dept2 = Department(name="DeptDelete")
         emp1 = Employee(id=1, name="John", surname="Smith", date_of_bidth=date(2000, 1, 1),
                         salary=1503,
-                        dept_name="Test_dept1")
+                        dept_name="TestDept")
         emp2 = Employee(id=2, name="Delete", surname="Me", date_of_bidth=date(2000, 1, 1),
                         salary=1000, dept_name="DeptOne")
         db.session.add(dept1)
@@ -33,6 +34,7 @@ class TestWebViews(TestBase):
         db.session.add(emp1)
         db.session.add(emp2)
 
+        db.session.commit()
 
     def test_index(self):
         response = self.client.get('/')
@@ -44,27 +46,6 @@ class TestWebViews(TestBase):
     def test_404(self):
         response = self.client.get('/not_exist')
         self.assertEqual(404, response.status_code)
-
-    def test_departments(self):
-        response = self.client.get('/departments')
-        self.assertEqual(200, response.status_code)
-
-    def test_department(self):
-        response = self.client.get('/department/Test_dept1/')
-        self.assertEqual(200, response.status_code)
-
-    def test_add_department(self):
-        response = self.client.post('/department/add', data=self.DEPT_FORM, follow_redirects=True)
-        self.assertEqual(200, response.status_code)
-
-    def test_edit_department(self):
-        response = self.client.post('/department/edit', data=self.DEPT_FORM, follow_redirects=True)
-        self.assertEqual(200, response.status_code)
-
-    def test_delete_department(self):
-        response = self.client.post('/department/delete', data={"id": 2},
-                                    follow_redirects=True)
-        self.assertEqual(200, response.status_code)
 
     def test_employees(self):
         response = self.client.get('/employees')

@@ -9,14 +9,16 @@ class TestAPI(TestBase):
     DEPT_JSON = {"name": "Added"}
 
     @classmethod
-    def setUpClass(cls):
+    def setUp(cls):
         """Populates DB with required data"""
-        super().setUpClass()
+        super().setUp()
 
         dept1 = Department(name="DeptOne")
         dept2 = Department(name="DeptDelete")
         db.session.add(dept1)
         db.session.add(dept2)
+
+        db.session.commit()
 
     def test_get_department(self):
         response = self.client.get('/api/department/1')

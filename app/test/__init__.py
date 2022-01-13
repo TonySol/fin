@@ -10,7 +10,7 @@ from app import start_app, db
 class TestBase(TestCase):
 
     @classmethod
-    def setUpClass(cls):
+    def setUp(cls):
         """Makes a test db in temp file, populates it and pushes app context
 
         creates a test client, which allows to preserve a request context after request was handled
@@ -28,7 +28,7 @@ class TestBase(TestCase):
         db.create_all()
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDown(cls):
         """Removes db by closing link to the temp file, and removes app context
 
         Call destruction of request and app context manually, because test_client blocks the
