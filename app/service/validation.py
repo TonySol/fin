@@ -1,10 +1,17 @@
+"""Module with a class used to validate user input before calling services"""
+
 from datetime import date
 
 from app import db
-from app.models import Department
+from app.models.model import Department
 
 
 class Validation:
+    """Holds custom private methods to validate user input
+
+    In the future can be replaced with ready-made WTForms validation
+    – `validate` class method aggregates all methods and can be called from outside of the class
+    """
     TABLE_NAME = None
 
     @staticmethod
@@ -62,6 +69,16 @@ class Validation:
 
     @classmethod
     def validate(cls, form_data):
+        """Aggregates all methods to call from outside of the class and validate user input
+
+        Checks if required entry exists in the parent table.
+        Obtains DB column requirements from the model (datatype, max length, etc).
+        Checks user input against DB requirements.
+
+        :param form_data: unvalidated user input in the form of dict.
+        :type form_data: dict
+        :return: dict with user input or string with description of validation fail.
+        """
         if cls.__name__ == "EmployeeService" and form_data["dept_name"] \
                 and cls.__check_dept_exist(form_data["dept_name"]) is not True:
             return "Failed: check if such department exists."
