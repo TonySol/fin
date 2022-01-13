@@ -1,29 +1,17 @@
-import os
-import tempfile
 from datetime import date
-from unittest import TestCase, main
+from unittest import main
 
-from config import Test
-from app import start_app, db
+from app.test import TestBase
+
+from app import db
 from app.models.model import Department, Employee
 from app.service.services import DepartmentService, EmployeeService
 
 
-class TestServices(TestCase):
+class TestServices(TestBase):
     @classmethod
     def setUpClass(cls):
-        """Create an instance of an app, get access to specific app context,
-        push – bind the request context to the current app context.
-
-        Makes a test db in temp file and populates it"""
-        cls.file_handle, cls.file_path = tempfile.mkstemp()
-        Test.SQLALCHEMY_DATABASE_URI = f'sqlite:///{cls.file_path}'
-
-        cls.app = start_app(Test)
-        cls.app_context = cls.app.app_context()
-        cls.app_context.push()
-
-        db.create_all()
+        super().setUpClass()
 
         dept1 = Department(name="Test_dept1")
         dept2 = Department(name="Test_dept2")
@@ -43,15 +31,6 @@ class TestServices(TestCase):
         db.session.add(emp3)
 
         db.session.commit()
-
-    @classmethod
-    def tearDownClass(cls):
-        """Removes db session, removes db file by closing link to the temp file.
-        Removes request and app context by calling teardown functions."""
-        db.session.remove()
-        os.close(cls.file_handle)
-        os.unlink(cls.file_path)
-        cls.app_context.pop()
 
     def test_get_all(self):
         result = DepartmentService.get_all()

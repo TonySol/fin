@@ -27,7 +27,7 @@ jobs:
     - name: Lint with my lint (remember to indicate rate threshold)
       run: python app/test/lint.py 0
 
-    - name: Test with pytest
+    - name: Test with unittest
       run: |
         coverage run -m unittest
         coverage report

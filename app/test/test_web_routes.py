@@ -1,15 +1,13 @@
-import os
-import tempfile
 from datetime import date
+from unittest import main
 
-from unittest import TestCase, main
+from app.test import TestBase
 
-from config import Test
-from app import start_app, db
+from app import db
 from app.models.model import Department, Employee
 
 
-class TestWebViews(TestCase):
+class TestWebViews(TestBase):
     DEPT_FORM = {"name": "Add Edit"}
     EMP_FORM = {"id": 4, "name": "Vova", "surname": "Thi Lvova",
                 "date_of_bidth": date(1980, 1, 1), "salary": 1500, "dept_name": "Test_dept1"}
@@ -21,14 +19,8 @@ class TestWebViews(TestCase):
         creates a test client, which allows to preserve a request context after request was handled
         this helps get all request execution details for tests,
         """
-        cls.file_handle, cls.file_path = tempfile.mkstemp()
-        Test.SQLALCHEMY_DATABASE_URI = f'sqlite:///{cls.file_path}'
+        super().setUpClass()
 
-        cls.app = start_app(Test)
-        cls.app_context = cls.app.app_context()
-        cls.app_context.push()
-
-        db.create_all()
         dept1 = Department(name="Test_dept1")
         dept2 = Department(name="DeptDelete")
         emp1 = Employee(id=1, name="John", surname="Smith", date_of_bidth=date(2000, 1, 1),
@@ -41,19 +33,6 @@ class TestWebViews(TestCase):
         db.session.add(emp1)
         db.session.add(emp2)
 
-        cls.client = cls.app.test_client()
-
-    @classmethod
-    def tearDownClass(cls):
-        """Removes db by closing link to the temp file, and removes app context
-
-        Call destruction of request and app context manually, because test_client blocks the
-        automatic stack clean up. Or unittest will leak memory."""
-        db.session.remove()
-        os.close(cls.file_handle)
-        os.unlink(cls.file_path)
-
-        cls.app_context.pop()
 
     def test_index(self):
         response = self.client.get('/')
