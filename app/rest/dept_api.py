@@ -21,7 +21,7 @@ parser = reqparse.RequestParser()
 parser.add_argument('name', type=str)
 
 
-@api.resource('/department/<int:id>')
+@api.resource('/department/<int:id_no>')
 class DepartmentItem(Resource):
     """A class holds id related API methods """
 

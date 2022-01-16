@@ -30,7 +30,7 @@ parser.add_argument('date_of_bidth', type=inputs.date)
 parser.add_argument('dept_name', type=str)
 
 
-@api.resource('/employee/<int:id>')
+@api.resource('/employee/<int:id_no>')
 class EmployeeItem(Resource):
     """A class holds id related API methods """
 
