@@ -5,7 +5,7 @@ name: EPAM fin project winter 2021/2022
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
     branches: [ main ]
 
@@ -24,8 +24,8 @@ jobs:
     - name: Install dependencies
       run: pip install -r requirements.txt
 
-    - name: Lint with my lint (remember to indicate rate threshold)
-      run: python app/test/lint.py 0
+    - name: Lint with pylint
+      run: pylint **/*.py
 
     - name: Test with unittest
       run: |

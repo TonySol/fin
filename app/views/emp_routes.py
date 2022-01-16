@@ -1,10 +1,10 @@
 """The module describes controllers in for department-related routes."""
+# pylint: disable=cyclic-import
+from datetime import date
+from flask import render_template, url_for, request, flash, redirect, session
 
 from app.views import web
 from app.service.services import EmployeeService as emp_servie
-
-from datetime import date
-from flask import render_template, url_for, request, flash, redirect, session
 
 
 @web.route("/employees", defaults={'page': 1})
@@ -20,7 +20,7 @@ def employees(page):
     :return: rendered `employees.html` template
     """
 
-    emp_data = emp_servie.get_all(paginate=True, page=page, per_page=3)
+    emp_data = emp_servie.get_all(paginate=True, page=page)
     return render_template("employees.html", route_name="web.employees", emp_data=emp_data,
                            date_today=date.today(), title="List of all employees",
                            pagename="employee list")
@@ -49,22 +49,17 @@ def search():
         session["date"] = [start_date, end_date]
 
         filtered_result = emp_servie.search_by_date(paginate=True, page=page, per_page=2,
-                                        start_date=start_date, end_date=end_date)
+                                                    start_date=start_date, end_date=end_date)
 
-        return render_template("employees.html", route_name="web.search", emp_data=filtered_result,
-                               date_today=date.today(), title="Search by birthday results",
-                               pagename="employee list")
-
-
-    elif session["date"]:
+    else:
         start_date = session["date"][0]
         end_date = session["date"][1]
         filtered_result = emp_servie.search_by_date(paginate=True, page=page, per_page=2,
-                                        start_date=start_date, end_date=end_date)
+                                                    start_date=start_date, end_date=end_date)
 
-        return render_template("employees.html", route_name="web.search", emp_data=filtered_result,
-                               date_today=date.today(), title="Search by birthday results",
-                               pagename="employee list")
+    return render_template("employees.html", route_name="web.search", emp_data=filtered_result,
+                           date_today=date.today(), title="Search by birthday results",
+                           pagename="employee list")
 
 
 @web.route("/employees/add", methods=["GET", "POST"])

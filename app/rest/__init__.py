@@ -9,11 +9,11 @@ In turn, we pass flask blueprint object to the flask restful in order to initial
 Import modules afterwards thus avoiding circular import.
 """
 
-
 from flask import Blueprint
 from flask_restful import Api
 
 api_bp = Blueprint("api_bp", __name__)
 api = Api(api_bp)
 
+# pylint: disable=wrong-import-position
 from . import dept_api, emp_api

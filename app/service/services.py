@@ -7,8 +7,9 @@
 from sqlalchemy import func, desc
 
 from app import db
-from .validation import Validation
 from app.models.model import Department, Employee
+from app.service.validation import Validation
+
 
 
 class Service:
@@ -38,10 +39,10 @@ class Service:
         """
 
         def wrapper(cls, paginate=False, per_page=10, page=1, **kwargs):
+            # pylint: disable=not-callable
             if paginate:
                 return self(cls, **kwargs).paginate(per_page=per_page, page=page)
-            else:
-                return self(cls, **kwargs).all()
+            return self(cls, **kwargs).all()
 
         return wrapper
 
@@ -75,6 +76,7 @@ class Service:
         :param form_data: dict with value for the new entry in form column_name:value
         :type form_data: dict
         """
+        # pylint: disable=not-callable
         id_removed = cls.__remove_id_val(form_data)
         db.session.add(cls.TABLE_NAME(**id_removed))
         db.session.commit()

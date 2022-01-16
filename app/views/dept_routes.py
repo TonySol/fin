@@ -1,12 +1,11 @@
 """The module describes controllers for department-related routes."""
+# pylint: disable=cyclic-import
+from flask import abort, render_template, url_for, request, flash, redirect
 
 from app.views import web
 
 from app.service.services import DepartmentService as dept_service
 from app.service.services import EmployeeService as emp_servie
-
-
-from flask import abort, render_template, url_for, request, flash, redirect
 
 
 @web.route("/departments", defaults={'page': 1})

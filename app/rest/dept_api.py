@@ -6,12 +6,11 @@
 – resource_fields: describes field for marshalling
 – parser: reqparse handle. Parses incoming JSON values.
 """
-
-from . import api
-
+# pylint: disable=no-self-use, cyclic-import
 from flask_restful import Resource, reqparse, fields, marshal_with, abort
-from app.service.services import DepartmentService as dept_service
 
+from app.service.services import DepartmentService as dept_service
+from app.rest import api
 
 resource_fields = {
     'id': fields.Integer,
@@ -22,12 +21,12 @@ parser = reqparse.RequestParser()
 parser.add_argument('name', type=str)
 
 
-@api.resource('/department/<int:id>')
+@api.resource('/department/<int:id_no>')
 class DepartmentItem(Resource):
     """A class holds id related API methods """
 
     @marshal_with(resource_fields)
-    def get(self, id):
+    def get(self, id_no):
         """A handler for GET request.
 
         Fetches department by id via service. Returns marshalled JSON with 200 status code.
@@ -36,12 +35,12 @@ class DepartmentItem(Resource):
         :raises error: 404 if wrong\non-existent id
         :return: JSON with department's entry data, 200 status code
         """
-        result = dept_service.get_by_id(id)
+        result = dept_service.get_by_id(id_no)
         if not result:
-            abort(404, message=f"Can't find entry with id {id}")
+            abort(404, message=f"Can't find entry with id {id_no}")
         return result, 200
 
-    def put(self, id):
+    def put(self, id_no):
         """A handler for PUT request.
 
         Deserializes JSON data from the request. Adds id to the deserialized dict.
@@ -53,17 +52,17 @@ class DepartmentItem(Resource):
         :return: 200 status code
         """
         args = parser.parse_args(strict=True)
-        args["id"] = str(id)
+        args["id"] = str(id_no)
         validated = dept_service.validate(args)
         if isinstance(validated, str):
             return f"Could not edit the entry: {validated}", 404
 
         result = dept_service.edit_entry(validated)
         if result:
-            return f"The entry with id:{id} was changed successfully", 201
-        return f"The entry with id:{id} does not exists.", 404
+            return f"The entry with id:{id_no} was changed successfully", 201
+        return f"The entry with id:{id_no} does not exists.", 404
 
-    def delete(self, id):
+    def delete(self, id_no):
         """A handler for DELETE request.
 
         Deletes department entry by id via services. Returns 204 status code on success.
@@ -73,10 +72,10 @@ class DepartmentItem(Resource):
         :raises error: 404 if wrong\non-existent id.
         :return: 204 status code
         """
-        result = dept_service.delete_by_id(id)
+        result = dept_service.delete_by_id(id_no)
         if result > 0:
             return 204
-        return f"The entry with id:{id} does not exists.", 404
+        return f"The entry with id:{id_no} does not exists.", 404
 
 @api.resource('/department')
 class DepartmentsList(Resource):
@@ -110,4 +109,4 @@ class DepartmentsList(Resource):
 
             dept_service.add_entry(validated)
             return f"The entry with {args} was added successfully", 201
-        return f"The entry is missing some fields.", 404
+        return "The entry is missing some fields.", 404
