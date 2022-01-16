@@ -13,6 +13,7 @@ Holds subpackages:
 """
 
 import logging
+import sys
 from logging.handlers import RotatingFileHandler
 
 from flask import Flask
@@ -37,6 +38,9 @@ def start_app(config_option):
     No worries about flask application-specific states stored on a "global" extension.
     The one extension object is bound only to the exactly one flask app with its specific states.
     """
+
+    # pylint: disable=import-outside-toplevel, disable=no-member
+
     app = Flask(__name__)
     app.config.from_object(config_option)
 
@@ -49,20 +53,24 @@ def start_app(config_option):
     from app.rest import api_bp
     app.register_blueprint(api_bp, url_prefix="/api")
 
-
     if config_option.__name__ == "Config":
-        file_handler = RotatingFileHandler('fin.log', maxBytes=10240,
-                                           backupCount=10)
-        file_handler.setFormatter(logging.Formatter(
-            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-        file_handler.setLevel(logging.INFO)
-        app.logger.addHandler(file_handler)
+        formatter = logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
 
+        file_handler = RotatingFileHandler('fin.log', maxBytes=51200, backupCount=3)
+        file_handler.setFormatter(formatter)
+        file_handler.setLevel(logging.INFO)
+
+        cli_handler = logging.StreamHandler(sys.stdout)
+        cli_handler.setFormatter(formatter)
+        cli_handler.setLevel(logging.DEBUG)
+
+        app.logger.addHandler(file_handler)
+        app.logger.addHandler(cli_handler)
         app.logger.setLevel(logging.INFO)
         app.logger.info('Fin_project started')
 
     return app
-
 
 # def create_db(app):
 #     with app.app_context():

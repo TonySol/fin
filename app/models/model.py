@@ -3,6 +3,7 @@
 – `Department`: class for department model
 – `Employee`: class for employee model
 """
+# pylint: disable=too-few-public-methods
 from app import db
 
 class Department(db.Model):
@@ -21,7 +22,7 @@ class Department(db.Model):
     def __repr__(self):
         """Returns string representation of department object
         :return: string representation of department object"""
-        return self.id, self.name
+        return f"{self.id}, {self.name}"
 
 
 class Employee(db.Model):
@@ -40,7 +41,8 @@ class Employee(db.Model):
     surname = db.Column(db.String(20), nullable=False)
     date_of_bidth = db.Column(db.Date, index=True)
     salary = db.Column(db.Integer, nullable=False)
-    dept_name = db.Column(db.String(20), db.ForeignKey('department.name', ondelete='CASCADE', onupdate='CASCADE'))
+    dept_name = db.Column(db.String(20), db.ForeignKey('department.name',
+                                                       ondelete='CASCADE', onupdate='CASCADE'))
 
     def __repr__(self):
         """Returns string representation of employee object

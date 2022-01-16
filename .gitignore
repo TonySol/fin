@@ -7,6 +7,7 @@ lint_report.txt
 # Logs and databases #
 ######################
 *.log
+*.log.*
 *.sql
 *.sqlite
 

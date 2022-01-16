@@ -1,7 +1,9 @@
+"""The module describes controllers for index and error-handling routes."""
+# pylint: disable=cyclic-import
+from flask import render_template
+
 from app.views import web
 from app import db
-
-from flask import render_template
 
 
 @web.route("/")
@@ -16,6 +18,7 @@ def index():
                            title="Examine your departments",
                            pagename="Homepage")
 
+
 @web.app_errorhandler(404)
 def page_not_found(error):
     """Returns `404.html` template for such url routes: `404`
@@ -24,8 +27,9 @@ def page_not_found(error):
     :type error: int
     :return: rendered `404.html` template and 404 status code
     """
-    return render_template("404.html", title="404 page not found"), \
+    return render_template("404.html", title=f"{error}, page not found"), \
            404
+
 
 @web.app_errorhandler(500)
 def internal_error(error):
@@ -36,4 +40,4 @@ def internal_error(error):
     :return: rendered `500.html` template and 500 status code
     """
     db.session.rollback()
-    return render_template('500.html', title="500 error has occurred"), 500
+    return render_template('500.html', title=f"{error} error has occurred"), 500
