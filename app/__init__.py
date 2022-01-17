@@ -39,7 +39,7 @@ def start_app(config_option):
     The one extension object is bound only to the exactly one flask app with its specific states.
     """
 
-    # pylint: disable=import-outside-toplevel, disable=no-member
+    # pylint: disable=import-outside-toplevel, no-member
 
     app = Flask(__name__)
     app.config.from_object(config_option)
@@ -57,7 +57,7 @@ def start_app(config_option):
         formatter = logging.Formatter(
             '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
 
-        file_handler = RotatingFileHandler('fin.log', maxBytes=51200, backupCount=3)
+        file_handler = RotatingFileHandler('app/logs/fin.log', maxBytes=51200, backupCount=3)
         file_handler.setFormatter(formatter)
         file_handler.setLevel(logging.INFO)
 
@@ -71,11 +71,3 @@ def start_app(config_option):
         app.logger.info('Fin_project started')
 
     return app
-
-# def create_db(app):
-#     with app.app_context():
-#         db.create_all()
-#     dept = Department()
-#     dept.name = "Asus"
-#     db.session.add(dept)
-#     db.session.commit()

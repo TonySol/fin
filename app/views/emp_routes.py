@@ -23,7 +23,7 @@ def employees(page):
     emp_data = emp_servie.get_all(paginate=True, page=page)
     return render_template("employees.html", route_name="web.employees", emp_data=emp_data,
                            date_today=date.today(), title="List of all employees",
-                           pagename="employee list")
+                           pagename="all employees")
 
 
 @web.route("/employees/search", methods=["GET", "POST"])

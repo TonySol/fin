@@ -15,7 +15,7 @@ def index():
     :return: rendered `index.html` template
     """
     return render_template("index.html",
-                           title="Examine your departments",
+                           title="Examine your resources",
                            pagename="Homepage")
 
 
