@@ -11,7 +11,7 @@
         <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
     </symbol>
 </svg>
-<h1>This is {{ pagename }} page.</h1>
+<h2 class="text-center">Browse {{ pagename }}</h2>
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     {% for category, message in messages %}
@@ -34,21 +34,35 @@
   {% endif %}
 {% endwith %}
 
-<form class="row" method="POST" action="/employees/search">
-<h5>Search employees by date of birth</h5>
-    <div class="mb-3">
-        <label for="startDate" class="form-label">Born after:</label>
-        <input id="startDate" type="date" name="start_date" value={{date_today}}
-           min="1939-01-01" max={{date_today}}>
-        <label for="endDate" class="form-label">Born before:</label>
-        <input id="endDate" type="date" name="end_date" value={{date_today}}
-           min="1939-01-01" max={{date_today}}>
-            <div class="col-auto">
-        <button class="btn btn-primary" type="submit">Search</button>
-    </div>
-    </div>
+<div class="row row-cols-md-1 mb-3 mt-3 text-center">
+      <div class="col-md-auto">
+        <div class="card mb-4 rounded-3 shadow-sm">
+          <div class="card-header py-3">
+            <h5 class="my-0 fw-normal">Search employees by date of birth</h5>
+          </div>
+          <div class="card-body">
+              <form method="POST" action="/employees/search">
+                  <div class="row row-cols-auto">
+                      <div class="col p-2">
+                          <label>Start date:</label>
+                          <input id="startDate" type="date" name="start_date" value={{date_today}}
+                               min="1939-01-01" max={{date_today}}>
+                          </div>
+                      <div class="col p-2">
+                          <label>End date:&nbsp;&nbsp;</label>
+                          <input id="endDate" type="date" name="end_date" value={{date_today}}
+                               min="1939-01-01" max={{date_today}}>
+                      </div>
+                      <div class="col">
+                         <button class="btn btn-primary" type="submit">Search</button>
+                      </div>
+                  </div>
+              </form>
+          </div>
+        </div>
+      </div>
+</div>
 
-</form>
 
 
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">

@@ -2,23 +2,27 @@
 {% from "macros.html" import pagination %}
 
 {% block content %}
-<h1>Here are all employees of the {{ title }} department listed.</h1>
+<h2 class="text-center">Here are all employees of the {{ title }} department listed</h2>
 <div class="table-responsive">
 <table class="table align-middle table-striped table-hover">
+    <thead>
     <tr>
         <th scope="col">Name</th>
         <th scope="col">Surname</th>
         <th scope="col">Date of Birth</th>
         <th scope="col">Salary</th>
     </tr>
-    {% for entry in dept_data.items %}
-    <tr>
-        <td scope="row">{{ entry.name }}</td>
-        <td scope="row">{{ entry.surname }}</td>
-        <td scope="row">{{ entry.date_of_bidth }}</td>
-        <td scope="row">{{ entry.salary }}</td>
-    </tr>
-    {% endfor %}
+    </thead>
+    <tbody>
+        {% for entry in dept_data.items %}
+        <tr>
+            <td scope="row">{{ entry.name }}</td>
+            <td scope="row">{{ entry.surname }}</td>
+            <td scope="row">{{ entry.date_of_bidth }}</td>
+            <td scope="row">{{ entry.salary }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 </div>
 {{ pagination(dept_data, route_name, dept_name=dept_name) }}

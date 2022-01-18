@@ -1,6 +1,6 @@
 {% set navigation = {"Home": "web.index", "Departments": "web.departments", "Employees": "web.employees"} %}
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -20,12 +20,12 @@
 
   </head>
   <body>
-    <div class="container-fluid">
-      <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/index">Cofee matching</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+    <header class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/index">HR Explorer</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             {% if navigation %}
@@ -52,28 +52,44 @@
               </li>
             {% endif %}
           </ul>
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
         </div>
-      </nav>
-
+      </div>
+    </header>
+    <div class="container-fluid">
       <div style="margin-top: 58px">
         {% block content %}
         {% endblock content %}
       </div>
-
     </div>
-
-    <!--    Footer-->
-    <div class="fixed-bottom card-footerm text-center" >
-      {% if footer %}
-        &copy; 2021 TonySol – <a href="{{ footer }}">Check out this!</a>
-      {% else %}
-        &copy; 2021 TonySol– <a href="{{ url_for( 'web.index' ) }}">Homepage</a>
-      {% endif %}
-    </div>
+      <!--    Footer-->
+    <footer class="py-2 my-2">
+      <ul class="nav justify-content-center border-bottom pb-2 mb-2">
+        {% if navigation %}
+            {% for key, value in navigation.items() %}
+              {% if request.path == url_for( value ) %}
+                <li class="nav-item">
+                  <a class="nav-link px-2 text-muted active" aria-current="page" href="{{ url_for( value ) }}" >
+                    {{ key }}
+                  </a>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link px-2 text-muted" href="{{ url_for( value ) }}" >
+                    {{ key }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <li class="nav-item">
+                <a class="nav-link px-2 text-muted" href="/index" >
+                  Home page
+                </a>
+            </li>
+          {% endif %}
+      </ul>
+      <p class="text-center text-muted">© 2022 Tony Sol</p>
+    </footer>
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->

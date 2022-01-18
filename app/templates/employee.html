@@ -1,6 +1,6 @@
 {% extends "base.html"  %}
 {% block content %}
-<h1>Browse by {{ pagename }}</h1>
+<h2 class="text-center">Browse by {{ pagename }}</h2>
 
     {% for message in get_flashed_messages()%}
         <div class="alert alert-dark" role="alert">
