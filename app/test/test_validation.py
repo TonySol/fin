@@ -10,7 +10,7 @@ from app.service.services import EmployeeService, DepartmentService
 
 class TestValidation(TestBase):
     CORRECT = {"name": "Vova", "surname": "Thi Lvova", "salary": 1000,
-                "date_of_bidth": date(1980, 1, 1).isoformat(), "dept_name": "TestDept"}
+                "date_of_bidth": "2000-01-01", "dept_name": "TestDept"}
 
     DEPARTMENT = {"name": "TestDept"}
 
