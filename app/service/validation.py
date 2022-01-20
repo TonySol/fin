@@ -18,9 +18,7 @@ class Validation:
     @staticmethod
     def __check_col_exist(table_name, col_name):
         columns = [column.key for column in table_name.__table__.columns]
-        if col_name not in columns:
-            return False
-        return True
+        return bool(col_name in columns)
 
     @staticmethod
     def __get_col_datatype(table_name, col_name):
@@ -35,37 +33,28 @@ class Validation:
 
     @staticmethod
     def __check_integer(value):
-        try:
-            value = int(value)
-            if 0 > value < 2147483647:
-                return f"The {value} exceeds the max length."
-            return True
-        except ValueError:
-            return f"\"{value}\" is not of required data type."
+        if isinstance(value, int) or value.isdigit():
+            return True if 0 < int(value) < 2147483647 \
+                        else f"The {value} exceeds the max length."
+        return f"\"{value}\" is not of required data type."
+
 
     @staticmethod
-    def __check_string(value):
-        if any(not c.isalpha() for c in value):
-            if any(c.isspace() for c in value):
-                return True
-            return f"The {value} should contain letters only."
-        return True
+    def __check_date(value):
+        date_input = value
+        if not isinstance(value, datetime):
+            try:
+                date_input = datetime.fromisoformat(value)
+            except ValueError:
+                return f"The {value} should be of \"Year-Mon-Date\" or ISO format."
 
-    @staticmethod
-    def __check_date_string(value):
-        try:
-            date_input = date.fromisoformat(value)
-            if date(1940, 1, 1) > date_input < date(2006, 1, 1):
-                return "Have some sympathy, the man is out of appropriate age to exploit him"
-            return True
-        except ValueError:
-            return f"The {value} should be of \"Year-Mon-Date\" or ISO format."
+        return True if datetime(1940, 1, 1) < date_input < datetime(2006, 1, 1) \
+            else "Have some sympathy, the man is out of appropriate age to exploit him"
 
     @staticmethod
     def __check_dept_exist(name):
-        if db.session.query(Department).filter_by(name=name).all():
-            return True
-        return "Failed: check if such department exists."
+        return True if db.session.query(Department).filter_by(name=name).all() \
+                    else "Failed: check if such department exists."
 
     @classmethod
     def validate(cls, form_data):
@@ -96,19 +85,18 @@ class Validation:
 
             if value:
                 if isinstance(value, str) and value.isspace():
-                    return f"Empty [{key}] field is not allowed"
+                    return f"Empty [{key}] field is not allowed."
 
                 if max_length and (len(value) > max_length or len(value) > 2000000):
                     return f"The {value} should be positive and fit max length of [{key}]."
 
-                if isinstance(int(1), data_type) and cls.__check_integer(value) is not True:
+                if data_type is int and cls.__check_integer(value) is not True:
                     return cls.__check_integer(value)
 
-                if isinstance(str("a"), data_type) and cls.__check_string(value) is not True:
-                    return cls.__check_string(value)
+                if data_type is str and not value.replace(" ", "").isalpha():
+                    return f"The {value} should contain letters only."
 
-                if not isinstance(value, datetime) and isinstance(date.today(), data_type) \
-                        and cls.__check_date_string(value) is not True:
-                    return cls.__check_date_string(value)
+                if data_type is date and cls.__check_date(value) is not True:
+                    return cls.__check_date(value)
 
         return form_data

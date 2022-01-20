@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from unittest import main
 
 from app.test import TestBase
@@ -10,7 +10,7 @@ from app.models.model import Department, Employee
 class TestAPI(TestBase):
     DEPT_JSON = {"name": "Added"}
     EMP_JSON = {"name": "Vova", "surname": "Thi Lvova", "salary": 1000,
-                "date_of_bidth": date(1980, 1, 1).isoformat(), "dept_name": "DeptOne"}
+                "date_of_bidth": "1996-10-01", "dept_name": "DeptOne"}
 
     @classmethod
     def setUp(cls):
@@ -18,9 +18,9 @@ class TestAPI(TestBase):
         super().setUp()
         dept1 = Department(name="DeptOne")
         dept2 = Department(name="DeptDelete")
-        emp1 = Employee(id=1, name="John", surname="Smith", date_of_bidth=date(2000, 1, 1),
+        emp1 = Employee(id=1, name="John", surname="Smith", date_of_bidth=datetime(2000, 1, 1),
                         salary=1503, dept_name="DeptOne")
-        emp2 = Employee(id=2, name="Delete", surname="Me", date_of_bidth=date(2000, 1, 1),
+        emp2 = Employee(id=2, name="Delete", surname="Me", date_of_bidth=datetime(2000, 1, 1),
                         salary=1000, dept_name="DeptOne")
 
         db.session.add(dept1)
